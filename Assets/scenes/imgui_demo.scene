@@ -1,0 +1,71 @@
+{
+  "__guid": "6f0341df-4eab-4d9e-937e-2ab4e286ec2a",
+  "GameObjects": [
+    {
+      "__guid": "0749f833-75fc-43bb-84a6-8b3e2da184bc",
+      "Flags": 0,
+      "Name": "Object",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ImGuiDemo",
+          "__guid": "d3b2cfe7-8251-4f9f-848d-47ec46595224"
+        }
+      ]
+    },
+    {
+      "__guid": "efda05f7-7b7e-4b63-8dc1-b10205dd7fb0",
+      "Flags": 0,
+      "Name": "Camera",
+      "Tags": "maincamera",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.CameraComponent",
+          "__guid": "cd28c215-016d-4ec0-be24-8aaa0d1b36e0",
+          "BackgroundColor": "0,0,0,1",
+          "ClearFlags": "All",
+          "FieldOfView": 60,
+          "IsMainCamera": true,
+          "Orthographic": false,
+          "OrthographicHeight": 1204,
+          "Priority": 1,
+          "RenderExcludeTags": "",
+          "RenderTags": "",
+          "TargetEye": "None",
+          "Viewport": "0,0,1,1",
+          "ZFar": 10000,
+          "ZNear": 10
+        }
+      ]
+    }
+  ],
+  "SceneProperties": {
+    "FixedUpdateFrequency": 50,
+    "MaxFixedUpdates": 5,
+    "NetworkFrequency": 30,
+    "NetworkInterpolation": true,
+    "PhysicsSubSteps": 1,
+    "ThreadedAnimation": true,
+    "TimeScale": 1,
+    "UseFixedUpdate": true,
+    "Metadata": {},
+    "NavMesh": {
+      "Enabled": false,
+      "IncludeStaticBodies": true,
+      "IncludeKeyframedBodies": true,
+      "EditorAutoUpdate": true,
+      "AgentHeight": 64,
+      "AgentRadius": 16,
+      "AgentStepSize": 18,
+      "AgentMaxSlope": 40,
+      "ExcludedBodies": "",
+      "IncludedBodies": ""
+    }
+  },
+  "ResourceVersion": 2,
+  "Title": null,
+  "Description": null,
+  "__references": [],
+  "__version": 2
+}
