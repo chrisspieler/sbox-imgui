@@ -6,8 +6,10 @@ namespace Duccsoft.ImGui;
 public enum ImGuiWindowFlags
 {
 	ImGuiWindowFlags_None						= 0, 
-	/*
-	ImGuiWindowFlags_NoTitleBar					= 1 << 0,
+	/// <summary>
+	/// If set, the window will have no title bar, which is useful for popups.
+	/// </summary>
+	ImGuiWindowFlags_NoTitleBar					= 1 << 0, /*
 	ImGuiWindowFlags_NoResize					= 1 << 1,
 	ImGuiWindowFlags_NoMove						= 1 << 2,
 	ImGuiWindowFlags_NoScrollbar				= 1 << 3,

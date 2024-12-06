@@ -17,18 +17,12 @@ public static partial class ImGui
 
 	public static void SetNextWindowPos( Vector2 position, ImGuiCond condition = default, Vector2 pivot = default )
 	{
-		position *= ImGuiStyle.UIScale;
-		var window = ImGuiSystem.Current.NextWindow;
-		if ( window is not null )
-		{
-			window.ScreenPosition = position;
-			window.Pivot = pivot;
-		}
+		ImGuiSystem.Current.NextWindowPosition = position;
+		ImGuiSystem.Current.NextWindowPivot = pivot;
 	}
 
 	public static void SetWindowPos( Vector2 position, ImGuiCond condition = default )
 	{
-		position *= ImGuiStyle.UIScale;
 		var window = ImGuiSystem.Current.CurrentWindow;
 		if ( window is not null )
 		{
@@ -40,17 +34,11 @@ public static partial class ImGui
 
 	public static void SetNextWindowSize( Vector2 size, ImGuiCond condition = default )
 	{
-		size *= ImGuiStyle.UIScale;
-		var window = ImGuiSystem.Current.NextWindow;
-		if ( window is not null )
-		{
-			window.CustomScreenSize = size;
-		}
+		ImGuiSystem.Current.NextWindowSize = size;
 	}
 
 	public static void SetWindowSize( Vector2 size, ImGuiCond condition = default )
 	{
-		size *= ImGuiStyle.UIScale;
 		var window = ImGuiSystem.Current.CurrentWindow;
 		if ( window is not null )
 		{

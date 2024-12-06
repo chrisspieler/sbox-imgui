@@ -2,7 +2,7 @@
 
 internal class TextWidget : Widget
 {
-	public TextWidget( string text )
+	public TextWidget( Window parent, string text ) : base( parent )
 	{
 		Text = text;
 		Show();

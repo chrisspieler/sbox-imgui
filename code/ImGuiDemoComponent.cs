@@ -13,12 +13,13 @@ public class ImGuiDemo : Component
 		Mouse.Visible = true;
 		DrawWindow1();
 		DrawWindow2();
+		DrawWindowNoTitle();
 		DrawMovingWindow();
 	}
 
 	private void DrawWindow1()
 	{
-		ImGui.SetNextWindowPos( new Vector2( 300, 200 ) );
+		ImGui.SetNextWindowPos( new Vector2( 300, 200 ) * ImGuiStyle.UIScale );
 		ImGui.Begin( "Window 1" );
 		if ( ImGui.Button( "Click me!" ) )
 		{
@@ -35,11 +36,20 @@ public class ImGuiDemo : Component
 
 		if ( ImGui.Begin( "Window 2", onClose: () => _shouldDrawWindow2 = false ) )
 		{
-			ImGui.SetWindowPos( new Vector2( 150, 250 ) );
+			ImGui.SetWindowPos( new Vector2( 150, 250 ) * ImGuiStyle.UIScale );
 			ImGui.Text( "Hello," );
 			ImGui.Text( "World!" );
 			ImGui.Text( "How's it going, everyone?" );
 		}
+		ImGui.End();
+	}
+
+	private void DrawWindowNoTitle()
+	{
+		ImGui.SetNextWindowPos( new Vector2( 500, 100 ) * ImGuiStyle.UIScale );
+		ImGui.Begin( "Window No Title", null, ImGuiWindowFlags.ImGuiWindowFlags_NoTitleBar );
+		ImGui.Text( "This window has no title!" );
+		ImGui.Text( "Wow." );
 		ImGui.End();
 	}
 	
@@ -64,8 +74,8 @@ public class ImGuiDemo : Component
 			return (size + offset) * new Vector2( 1280, 720 );
 		}
 
-		ImGui.SetNextWindowPos( GetPosition() );
-		ImGui.SetNextWindowSize( GetSize() );
+		ImGui.SetNextWindowPos( GetPosition() * ImGuiStyle.UIScale );
+		ImGui.SetNextWindowSize( GetSize() * ImGuiStyle.UIScale );
 		ImGui.Begin( "Test Window" );
 		ImGui.End();
 	}

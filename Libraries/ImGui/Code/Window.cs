@@ -3,19 +3,30 @@ using System.Collections.Generic;
 
 namespace Duccsoft.ImGui;
 
-internal class Window
+internal class Window : IUniqueId
 {
-	public string Name 
+	public Window( string name, Vector2 screenPos, Vector2 pivot, Vector2 size, ImGuiWindowFlags flags )
 	{
-		get => _name;
-		set
+		Name = name;
+		Id = ImGui.GetID( Name );
+		WindowFlags = flags;
+		ScreenPosition = screenPos;
+		Pivot = pivot;
+		CustomScreenSize = size;
+		ImGuiSystem.Current.CursorScreenPosition = ScreenRect.Position;
+		if ( !flags.HasFlag( ImGuiWindowFlags.ImGuiWindowFlags_NoTitleBar ) )
 		{
-			
-			_name = value;
+			_ = new WindowTitleBar( this );
 		}
+		ImGuiSystem.Current.CursorScreenPosition += ImGui.GetStyle().WindowPadding;
 	}
-	private string _name;
-	public int Id => HashCode.Combine( Name );
+
+	public int Id { get; init; }
+	public string Name { get; init; }
+	public ImGuiWindowFlags WindowFlags { get; init; }
+
+	public Action OnClose { get; set; }
+
 	public bool IsHovered { get; private set; }
 	public bool IsFocused 
 	{
@@ -32,7 +43,6 @@ internal class Window
 			}
 		}
 	}
-	public Action OnClose { get; set; }
 
 	#region Transform
 	/// <summary>
@@ -48,25 +58,19 @@ internal class Window
 			{
 				return CustomScreenSize;
 			}
-
 			var style = ImGui.GetStyle();
-			var size = ContentScreenSize;
-			size += style.WindowPadding * 2;
-			// size += style.ItemSpacing * ( Children.Count - 1 );
-			// Add title text size
-			var titleTextSize = GetTitleTextSize();
-			size.x = MathF.Max( titleTextSize.x * 2, size.x );
-			size.y += titleTextSize.y;
+			var size = ContentScreenSize + style.WindowPadding * 2;
 			return size;
 		}
 	}
 	public Vector2 CustomScreenSize { get; set; }
-	public Rect ContentRect => new( GetContentScreenPosition(), ContentScreenSize );
+	public Rect ContentRect => new( ScreenRect.Position + Padding, ContentScreenSize );
 	public Vector2 ContentScreenSize { get; private set; }
 
 	#endregion
 
 	#region Layout
+	public Vector2 Padding => ImGui.GetStyle().WindowPadding;
 	public List<Widget> Children { get; set; } = new();
 	public Rect ScreenRect
 	{
@@ -85,74 +89,31 @@ internal class Window
 	}
 	#endregion
 
-	#region Style
 	public static Color32 BackgroundColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_WindowBg );
 	public static Color32 BorderColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_Border );
-	public static Color32 TitleActiveColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_TitleBgActive );
-	public static Color32 TitleInactiveColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_TitleBg );
-	#endregion
 
-	public Vector2 AddChild( Widget childWidget )
+	public Rect AddChild( Widget childWidget )
 	{
-		var widgetPosition = Children.Count == 0
-			? GetContentScreenPosition()
-			: ImGuiSystem.Current.CursorScreenPosition;
-		childWidget.ParentWindow = this;
-		childWidget.ScreenPosition = widgetPosition;
+		childWidget.Parent = this;
+		childWidget.ScreenPosition = ImGuiSystem.Current.CursorScreenPosition;
 		Children.Add( childWidget );
-		var size = childWidget.GetSize();
+		var childRect = childWidget.GetScreenBounds();
+		var size = childRect.Size;
 		var spacing = Children.Count > 1 ? ImGui.GetStyle().ItemSpacing.y : 0;
 		ContentScreenSize = ContentScreenSize with
 		{
 			x = MathF.Max( size.x, ContentScreenSize.x ),
 			y = ContentScreenSize.y + size.y + spacing,
 		};
-		return widgetPosition + new Vector2( 0f, size.y );
+		return childRect;
 	}
-
-	public Vector2 GetContentScreenPosition()
-	{
-		var position = ScreenRect.Position;
-		// Account for title frame frame height.
-		position += new Vector2( 0f, ImGui.GetFrameHeightWithSpacing() );
-		position += ImGui.GetStyle().WindowPadding;
-		return position;
-	}
-
-	private Rect GetTitleBarRect()
-	{
-		var textPanelSize = new Vector2( ScreenRect.Width, ImGui.GetFrameHeightWithSpacing() );
-		return new Rect( ScreenRect.Position, textPanelSize );
-	}
-
-	private Vector2 GetTitleTextSize() => ImGui.CalcTextSize( Name ) + ImGui.GetStyle().FramePadding;
 
 	public void Paint( ImGuiPainter painter )
 	{
 		// Paint background
 		painter.DrawRect( ScreenRect, BackgroundColor, default, Vector4.One, BorderColor );
 
-		PaintTitleFrame( painter );
 		PaintChildren( painter );
-	}
-
-	private void PaintTitleFrame( ImGuiPainter painter )
-	{
-		var titleBarRect = GetTitleBarRect();
-
-		// Paint title background
-		var titleBarColor = IsFocused
-			? TitleActiveColor
-			: TitleInactiveColor;
-		painter.DrawRect( titleBarRect, titleBarColor );
-
-		// Paint title
-		var textPanelSize = GetTitleTextSize();
-		var xTextOffset = titleBarRect.Size.x * 0.5f - textPanelSize.x * 0.5f;
-		var yTextOffset = textPanelSize.y * 0.25f;
-		var textPanelPos = titleBarRect.Position + new Vector2( xTextOffset, yTextOffset );
-		var textRect = new Rect( textPanelPos, textPanelSize );
-		painter.DrawText( Name, textRect );
 	}
 
 	private void PaintChildren( ImGuiPainter painter )

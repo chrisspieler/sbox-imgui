@@ -2,11 +2,18 @@
 
 namespace Duccsoft.ImGui;
 
-internal abstract class Widget
+internal abstract class Widget : IUniqueId
 {
-	public int Id { get; set; }
-	public void Show() => ImGuiSystem.Current.AddWidget( this );
-	public Window ParentWindow { get; set; }
+	protected Widget( Window parent )
+	{
+		Parent = parent;
+		var typeId = GetType().GetHashCode();
+		Id = ImGui.GetID( typeId );
+	}
+
+	public int Id { get; init; }
+
+	public Window Parent { get; set; }
 	public Vector2 ScreenPosition { get; set; }
 	public bool IsActive => ImGuiSystem.Current.ClickedWidget == Id;
 	public bool IsHovered { get; set; }
@@ -14,6 +21,15 @@ internal abstract class Widget
 
 	public abstract Vector2 GetSize();
 	public Rect GetScreenBounds() => new( ScreenPosition, GetSize() );
+
+	/// <summary>
+	/// Adds the widget to the current draw list and sets its parent window.
+	/// </summary>
+	public void Show()
+	{
+		ImGuiSystem.Current.AddWidget( Parent, this );
+	}
+
 	public abstract void Paint( ImGuiPainter painter );
 
 	public virtual void UpdateInput( MouseState mouse )
@@ -22,7 +38,7 @@ internal abstract class Widget
 
 		var wasWindowHovered = false;
 		var lastDrawList = ImGuiSystem.Current.PreviousDrawList;
-		if ( lastDrawList.WindowIds.TryGetValue( ParentWindow.Id, out var lastWindow ) )
+		if ( lastDrawList.WindowIds.TryGetValue( Parent.Id, out var lastWindow ) )
 		{
 			wasWindowHovered = lastWindow.IsHovered;
 		}

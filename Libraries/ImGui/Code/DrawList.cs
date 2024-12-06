@@ -47,7 +47,7 @@ internal class DrawList
 		// The last window in the DrawList is the topmost window.
 		foreach ( var window in WindowIds.Values.Reverse() )
 		{
-			if ( widget.ParentWindow == window )
+			if ( widget.Parent == window )
 			{
 				// We've reached this widget's window, and the widget hasn't been covered so far.
 				return true;

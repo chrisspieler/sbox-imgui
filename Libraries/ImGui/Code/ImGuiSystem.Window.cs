@@ -10,6 +10,7 @@ internal partial class ImGuiSystem
 	// drawn before a window was occluded by that window on the previous frame.
 	public DrawList PreviousDrawList { get; set; } = new();
 	private Stack<Window> WindowStack { get; init; } = new();
+	public IdStack IdStack { get; set; } = new();
 
 	public Window CurrentWindow
 	{
@@ -21,8 +22,9 @@ internal partial class ImGuiSystem
 			return WindowStack.Peek();
 		}
 	}
-
-	public Window NextWindow { get; private set; } = new();
+	public Vector2 NextWindowPosition { get; set; }
+	public Vector2 NextWindowPivot { get; set; }
+	public Vector2 NextWindowSize { get; set; }
 	public string FocusedWindow { get; private set; }
 	public int ClickedWidget { get; set; }
 
@@ -40,22 +42,28 @@ internal partial class ImGuiSystem
 
 	public void BeginWindow( string name, Action onClose, ImGuiWindowFlags flags )
 	{
-		NextWindow.Name = name;
-		WindowStack.Push( NextWindow );
-		FocusedWindow ??= NextWindow.Name;
-		CursorScreenPosition = NextWindow.GetContentScreenPosition();
-		NextWindow = new();
+		var nextWindow = new Window( name, NextWindowPosition, NextWindowPivot, NextWindowSize, flags );
+		IdStack.Push( nextWindow.Id );
+		NextWindowPosition = default;
+		NextWindowPivot = default;
+		NextWindowSize = default;
+		WindowStack.Push( nextWindow );
+		FocusedWindow ??= nextWindow.Name;
 	}
 
-	public void AddWidget( Widget widget )
+	public void AddWidget( Window window, Widget widget )
 	{
-		CursorScreenPosition = CurrentWindow.AddChild( widget );
+		var widgetRect = window.AddChild( widget );
+		// TODO: Add SameLine support.
+		var cursorOffset = new Vector2( 0f, widgetRect.Size.y + Style.ItemSpacing.y );
+		CursorScreenPosition = widgetRect.Position + cursorOffset;
 		CurrentDrawList.AddWidget( widget );
 	}
 
 	public void EndWindow()
 	{
 		var popped = WindowStack.Pop();
+		IdStack.Pop();
 		if ( WindowStack.Count > 0 && popped.Name == FocusedWindow )
 		{
 			// TODO: Create a focus stack separate from draw order.

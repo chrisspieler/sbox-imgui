@@ -2,10 +2,10 @@
 
 internal class ButtonWidget : Widget
 {
-	public ButtonWidget( string label )
+	public ButtonWidget( Window parent, string label ) : base( parent )
 	{
 		Label = label;
-		Id = Label.GetHashCode();
+		Id = ImGui.GetID( Label.GetHashCode() );
 		Show();
 	}
 
