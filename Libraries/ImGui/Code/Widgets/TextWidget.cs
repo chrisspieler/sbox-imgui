@@ -5,6 +5,7 @@ internal class TextWidget : Widget
 	public TextWidget( string text )
 	{
 		Text = text;
+		Show();
 	}
 
 	public string Text { get; set; }

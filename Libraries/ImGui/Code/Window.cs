@@ -15,6 +15,22 @@ internal class Window
 		}
 	}
 	private string _name;
+	public bool IsHovered { get; private set; }
+	public bool IsFocused 
+	{
+		get => ImGuiSystem.Current.FocusedWindow == Name; 
+		set
+		{
+			if ( value )
+			{
+				ImGuiSystem.Current.Focus( this );
+			}
+			else if ( ImGuiSystem.Current.FocusedWindow == Name )
+			{
+				ImGuiSystem.Current.Focus( null );
+			}
+		}
+	}
 	public Action OnClose { get; set; }
 
 	#region Transform
@@ -72,6 +88,7 @@ internal class Window
 	public static Color32 BackgroundColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_WindowBg );
 	public static Color32 BorderColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_Border );
 	public static Color32 TitleActiveColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_TitleBgActive );
+	public static Color32 TitleInactiveColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_TitleBg );
 	#endregion
 
 	public Vector2 AddChild( Widget childWidget )
@@ -123,7 +140,10 @@ internal class Window
 		var titleBarRect = GetTitleBarRect();
 
 		// Paint title background
-		painter.DrawRect( titleBarRect, TitleActiveColor );
+		var titleBarColor = IsFocused
+			? TitleActiveColor
+			: TitleInactiveColor;
+		painter.DrawRect( titleBarRect, titleBarColor );
 
 		// Paint title
 		var textPanelSize = GetTitleTextSize();
@@ -131,7 +151,7 @@ internal class Window
 		var yTextOffset = textPanelSize.y * 0.25f;
 		var textPanelPos = titleBarRect.Position + new Vector2( xTextOffset, yTextOffset );
 		var textRect = new Rect( textPanelPos, textPanelSize );
-		painter.DrawText( Name, textRect, TextFlag.Center );
+		painter.DrawText( Name, textRect );
 	}
 
 	private void PaintChildren( ImGuiPainter painter )
@@ -139,6 +159,15 @@ internal class Window
 		foreach( var child in Children )
 		{
 			child.Paint( painter );
+		}
+	}
+
+	public void UpdateInput( MouseState mouse, bool hovered )
+	{
+		IsHovered = hovered;
+		if ( hovered && mouse.LeftClickPressed )
+		{
+			IsFocused = true;
 		}
 	}
 }

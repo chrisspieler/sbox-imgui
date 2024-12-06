@@ -12,9 +12,8 @@ internal partial class ImGuiSystem
 		};
 
 		Listen( Stage.StartUpdate, 0, Clear, "ImGui Clear" );
-		Listen( Stage.FinishUpdate, 0, Draw, "ImGui Draw" );
+		Listen( Stage.FinishUpdate, 100, Draw, "ImGui Draw" );
 	}
-
 
 	public bool UseSceneCamera { get; } = true;
 	public ImGuiPainter Painter => new( CommandList );

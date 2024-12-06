@@ -20,6 +20,13 @@ internal partial class ImGuiSystem
 	}
 
 	public Window NextWindow { get; private set; } = new();
+	public string FocusedWindow { get; private set; }
+	public int ClickedWidget { get; set; }
+
+	public void Focus( Window window )
+	{
+		FocusedWindow = window?.Name;
+	}
 
 	public void ClearWindows()
 	{
@@ -31,6 +38,7 @@ internal partial class ImGuiSystem
 	{
 		NextWindow.Name = name;
 		WindowStack.Push( NextWindow );
+		FocusedWindow ??= NextWindow.Name;
 		CursorScreenPosition = NextWindow.GetContentScreenPosition();
 		NextWindow = new();
 	}
@@ -42,6 +50,12 @@ internal partial class ImGuiSystem
 
 	public void PopWindow()
 	{
-		WindowDrawList.Add( WindowStack.Pop() );
+		var popped = WindowStack.Pop();
+		if ( WindowStack.Count > 0 && popped.Name == FocusedWindow )
+		{
+			// TODO: Create a focus stack separate from draw order.
+			FocusedWindow = WindowStack.Peek().Name;
+		}
+		WindowDrawList.Add( popped );
 	}
 }

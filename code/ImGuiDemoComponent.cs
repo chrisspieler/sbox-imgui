@@ -5,6 +5,8 @@ namespace Sandbox;
 
 public class ImGuiDemo : Component
 {
+	private int _clickCounter;
+
 	protected override void OnUpdate()
 	{
 		Mouse.Visible = true;
@@ -17,8 +19,11 @@ public class ImGuiDemo : Component
 		ImGui.End();
 		if ( ImGui.Begin( "Window 1" ) )
 		{
-			ImGui.SetWindowPos( new Vector2( 200, 300 ) );
-			// ImGui.SetWindowSize( new Vector2( 200, 100 ) );
+			if ( ImGui.Button( "Click me!" ) )
+			{
+				_clickCounter++;
+			}
+			ImGui.Text( "Clicked {0} times.", _clickCounter );
 		}
 		ImGui.End();
 		if ( ImGui.Begin( "Window 2" ) )
