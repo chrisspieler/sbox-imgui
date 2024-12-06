@@ -1,4 +1,4 @@
-﻿using Duccsoft;
+﻿using Duccsoft.ImGui;
 using System;
 
 namespace Sandbox;
@@ -18,13 +18,16 @@ public class ImGuiDemo : Component
 		if ( ImGui.Begin( "Window 1" ) )
 		{
 			ImGui.SetWindowPos( new Vector2( 200, 300 ) );
-			ImGui.SetWindowSize( new Vector2( 200, 100 ) );
+			// ImGui.SetWindowSize( new Vector2( 200, 100 ) );
 		}
 		ImGui.End();
 		if ( ImGui.Begin( "Window 2" ) )
 		{
 			ImGui.SetWindowPos( new Vector2( 250, 310 ) );
-			ImGui.SetWindowSize( new Vector2( 200, 100 ) );
+			// ImGui.SetWindowSize( new Vector2( 150, 100 ) );
+			ImGui.Text( "Hello," );
+			ImGui.Text( "World!" );
+			ImGui.Text( "How's it going, everyone?" );
 		}
 		ImGui.End();
 	}

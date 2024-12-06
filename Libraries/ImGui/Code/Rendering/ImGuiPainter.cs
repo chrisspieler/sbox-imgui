@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-namespace Duccsoft;
+namespace Duccsoft.ImGui;
 
 /// <summary>
 /// Wraps a HudPainter to extend its drawing functionality.
@@ -20,10 +20,10 @@ internal readonly ref struct ImGuiPainter
 		_hudPainter.DrawRect( rect, color, cornerRadius, borderWidth, borderColor );
 	}
 
-	public readonly void DrawText( in string text, in Rect rect )
+	public readonly void DrawText( in string text, in Rect rect, TextFlag flag = TextFlag.LeftTop )
 	{
 		var textColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_Text );
 		var scope = new TextRendering.Scope( text, textColor, ImGui.GetFontSize(), "Consolas" );
-		_hudPainter.DrawText( scope, rect );
+		_hudPainter.DrawText( scope, rect, flag );
 	}
 }

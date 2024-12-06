@@ -1,54 +1,56 @@
 ﻿using System;
 
-namespace Duccsoft;
+namespace Duccsoft.ImGui;
 
 public static partial class ImGui
 {
 	public static bool Begin( string name, Action onClose = null, ImGuiWindowFlags flags = default )
 	{
-		ImGuiContextSystem.Current.PushWindow( name, onClose, flags );
+		ImGuiSystem.Current.PushWindow( name, onClose, flags );
 		return true;
 	}
 
 	public static void End()
 	{
-		ImGuiContextSystem.Current.PopWindow();
+		ImGuiSystem.Current.PopWindow();
 	}
 
 	public static void SetNextWindowPos( Vector2 position, ImGuiCond condition = default, Vector2 pivot = default )
 	{
-		var window = ImGuiContextSystem.Current.NextWindow;
+		var window = ImGuiSystem.Current.NextWindow;
 		if ( window is not null )
 		{
-			window.Position = position;
+			window.ScreenPosition = position;
 			window.Pivot = pivot;
 		}
 	}
 
 	public static void SetWindowPos( Vector2 position, ImGuiCond condition = default )
 	{
-		var window = ImGuiContextSystem.Current.CurrentWindow;
+		var window = ImGuiSystem.Current.CurrentWindow;
 		if ( window is not null )
 		{
-			window.Position = position;
+			var delta = position - window.ScreenPosition;
+			window.ScreenPosition = position;
+			ImGuiSystem.Current.CursorScreenPosition += delta;
 		}
 	}
 
 	public static void SetNextWindowSize( Vector2 size, ImGuiCond condition = default )
 	{
-		var window = ImGuiContextSystem.Current.NextWindow;
+		var window = ImGuiSystem.Current.NextWindow;
 		if ( window is not null )
 		{
-			window.Size = size;
+			window.CustomScreenSize = size;
 		}
 	}
 
 	public static void SetWindowSize( Vector2 size, ImGuiCond condition = default )
 	{
-		var window = ImGuiContextSystem.Current.CurrentWindow;
+		var window = ImGuiSystem.Current.CurrentWindow;
 		if ( window is not null )
 		{
-			window.Size = size;
+			window.CustomScreenSize = size;
 		}
 	}
 }

@@ -1,26 +1,26 @@
-﻿using Duccsoft;
-using Sandbox.Rendering;
+﻿using Sandbox.Rendering;
 
-internal class ImGuiRenderSystem : GameObjectSystem<ImGuiRenderSystem>
+namespace Duccsoft.ImGui;
+
+internal partial class ImGuiSystem
 {
-	public ImGuiRenderSystem( Scene scene ) : base( scene )
+	private void InitRendering()
 	{
 		CommandList = new CommandList( "ImGui" )
 		{
 			Flags = CommandList.Flag.Hud
 		};
-		Style = new();
-		ImGui.StyleColorsDark( Style );
+
 		Listen( Stage.StartUpdate, 0, Clear, "ImGui Clear" );
 		Listen( Stage.FinishUpdate, 0, Draw, "ImGui Draw" );
 	}
 
-	public ImGuiStyle Style { get; private set; }
+
 	public bool UseSceneCamera { get; } = true;
 	public ImGuiPainter Painter => new( CommandList );
 	private CameraComponent TargetCamera { get; set; }
 
-	public CommandList CommandList { get; }
+	public CommandList CommandList { get; private set; }
 	public Sandbox.Rendering.Stage RenderingStage { get; set; } = Sandbox.Rendering.Stage.AfterPostProcess;
 
 	private void Clear()
@@ -67,11 +67,11 @@ internal class ImGuiRenderSystem : GameObjectSystem<ImGuiRenderSystem>
 		if ( !Game.IsPlaying )
 			return;
 
-		var windows = ImGuiContextSystem.Current.WindowDrawList;
+		var windows = WindowDrawList;
 		foreach ( var window in windows )
 		{
 			window.Paint( Painter );
 		}
-		ImGuiContextSystem.Current.ClearWindows();
+		ClearWindows();
 	}
 }

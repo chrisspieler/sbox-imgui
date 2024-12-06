@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Duccsoft;
+namespace Duccsoft.ImGui;
 
 [Flags]
 public enum ImGuiWindowFlags

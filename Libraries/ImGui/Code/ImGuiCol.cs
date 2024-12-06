@@ -1,4 +1,4 @@
-﻿namespace Duccsoft;
+﻿namespace Duccsoft.ImGui;
 public enum ImGuiCol
 {
 	ImGuiCol_Text,

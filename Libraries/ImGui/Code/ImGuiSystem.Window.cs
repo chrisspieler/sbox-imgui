@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Duccsoft;
+namespace Duccsoft.ImGui;
 
-internal partial class ImGuiContextSystem
+internal partial class ImGuiSystem
 {
 	public List<Window> WindowDrawList { get; init; } = new();
 	private Stack<Window> WindowStack { get; init; } = new();
@@ -31,7 +31,13 @@ internal partial class ImGuiContextSystem
 	{
 		NextWindow.Name = name;
 		WindowStack.Push( NextWindow );
+		CursorScreenPosition = NextWindow.GetContentScreenPosition();
 		NextWindow = new();
+	}
+
+	public void PushWidget( Widget widget )
+	{
+		CursorScreenPosition = CurrentWindow.AddChild( widget );
 	}
 
 	public void PopWindow()

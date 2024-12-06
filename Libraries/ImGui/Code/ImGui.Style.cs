@@ -1,20 +1,19 @@
 ﻿using System;
 
-namespace Duccsoft;
+namespace Duccsoft.ImGui;
 
 public static partial class ImGui
 {
-	private static float GetUIScale => MathF.Min( Screen.Width, Screen.Height ) * Screen.DesktopScale;
-	public static float GetFontSize() => (int)(0.012f * GetUIScale);
+	public static float GetFontSize() => (int)(18 * ImGuiStyle.UIScale);
 
 	public static ImGuiStyle GetStyle()
 	{
-		return ImGuiRenderSystem.Current.Style;
+		return ImGuiSystem.Current.Style;
 	}
 
 	public static Color32 GetColorU32( ImGuiCol color, float alphaMul = 1.0f )
 	{
-		var colors = ImGuiRenderSystem.Current.Style.Colors;
+		var colors = ImGuiSystem.Current.Style.Colors;
 
 		if ( colors is null || !colors.TryGetValue( color, out Color32 styleColor ) )
 			return new Color32( 0xFF, 0x00, 0xFF, (byte)(0xFF * alphaMul) );
