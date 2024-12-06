@@ -6,53 +6,67 @@ namespace Sandbox;
 public class ImGuiDemo : Component
 {
 	private int _clickCounter;
+	private bool _shouldDrawWindow2 = true;
 
 	protected override void OnUpdate()
 	{
 		Mouse.Visible = true;
-		ImGui.SetNextWindowPos( GetPosition() );
-		ImGui.SetNextWindowSize( GetSize() );
-		if ( ImGui.Begin( "Test Window" ) )
-		{
+		DrawWindow1();
+		DrawWindow2();
+		DrawMovingWindow();
+	}
 
-		}
-		ImGui.End();
-		if ( ImGui.Begin( "Window 1" ) )
+	private void DrawWindow1()
+	{
+		ImGui.SetNextWindowPos( new Vector2( 300, 200 ) );
+		ImGui.Begin( "Window 1" );
+		if ( ImGui.Button( "Click me!" ) )
 		{
-			if ( ImGui.Button( "Click me!" ) )
-			{
-				_clickCounter++;
-			}
-			ImGui.Text( "Clicked {0} times.", _clickCounter );
+			_clickCounter++;
 		}
+		ImGui.Text( "Clicked {0} times.", _clickCounter );
 		ImGui.End();
-		if ( ImGui.Begin( "Window 2" ) )
+	}
+
+	private void DrawWindow2()
+	{
+		if ( !_shouldDrawWindow2 )
+			return;
+
+		if ( ImGui.Begin( "Window 2", onClose: () => _shouldDrawWindow2 = false ) )
 		{
-			ImGui.SetWindowPos( new Vector2( 250, 310 ) );
-			// ImGui.SetWindowSize( new Vector2( 150, 100 ) );
+			ImGui.SetWindowPos( new Vector2( 150, 250 ) );
 			ImGui.Text( "Hello," );
 			ImGui.Text( "World!" );
 			ImGui.Text( "How's it going, everyone?" );
 		}
 		ImGui.End();
 	}
-
-	private Vector2 GetPosition()
+	
+	private void DrawMovingWindow()
 	{
-		var sin = (MathF.Sin( Time.Now * 0.8f ) + 1) * 0.5f;
-		var cos = (MathF.Cos( Time.Now * 0.8f ) + 1) * 0.5f;
-		var sinCos = new Vector2( sin, cos );
-		sinCos *= 0.7f;
-		sinCos += 0.075f;
-		return sinCos * Screen.Size;
-	}
+		Vector2 GetPosition()
+		{
+			var sin = (MathF.Sin( Time.Now * 0.8f ) + 1) * 0.5f;
+			var cos = (MathF.Cos( Time.Now * 0.8f ) + 1) * 0.5f;
+			var sinCos = new Vector2( sin, cos );
+			sinCos *= 0.7f;
+			sinCos += 0.075f;
+			return sinCos * new Vector2( 1280, 720 );
+		}
 
-	private Vector2 GetSize()
-	{
-		var size = new Vector2( 0.20f, 0.10f );
-		var sin1 = (MathF.Sin( Time.Now * 0.7f ) + 1) * 0.5f;
-		var sin2 = (MathF.Sin( Time.Now * 0.85f ) + 1) * 0.5f;
-		var offset = new Vector2( 0.4f, 0.2f ) * new Vector2( sin1, sin2 );
-		return ( size + offset ) * Screen.Size;
+		Vector2 GetSize()
+		{
+			var size = new Vector2( 0.20f, 0.10f );
+			var sin1 = (MathF.Sin( Time.Now * 0.7f ) + 1) * 0.5f;
+			var sin2 = (MathF.Sin( Time.Now * 0.85f ) + 1) * 0.5f;
+			var offset = new Vector2( 0.4f, 0.2f ) * new Vector2( sin1, sin2 );
+			return (size + offset) * new Vector2( 1280, 720 );
+		}
+
+		ImGui.SetNextWindowPos( GetPosition() );
+		ImGui.SetNextWindowSize( GetSize() );
+		ImGui.Begin( "Test Window" );
+		ImGui.End();
 	}
 }

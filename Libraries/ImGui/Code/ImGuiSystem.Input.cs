@@ -55,7 +55,7 @@ internal partial class ImGuiSystem
 	private void UpdateWindowFocus()
 	{
 		var hoveredWindow = GetHoveredWindow( MouseState.Position );
-		foreach ( var window in WindowDrawList )
+		foreach ( var window in CurrentDrawList.Windows )
 		{
 			var isHovered = window == hoveredWindow;
 			window.UpdateInput( MouseState, isHovered );
@@ -80,6 +80,10 @@ internal partial class ImGuiSystem
 	}
 	private void ClearInputState()
 	{
+		if ( !_leftClickDown )
+		{
+			ClickedWidget = 0;
+		}
 		_leftClickPressed = false;
 		_leftClickReleased = false;
 		_rightClickPressed = false;
@@ -87,10 +91,11 @@ internal partial class ImGuiSystem
 		_middleClickPressed = false;
 		_middleClickReleased = false;
 	}
+
 	private Window GetHoveredWindow( Vector2 hoverPos )
 	{
 		Window hovered = null;
-		foreach ( var window in WindowDrawList )
+		foreach ( var window in CurrentDrawList.Windows )
 		{
 			// Since the window list was filled back-to-front, the last window is guaranteed frontmost.
 			if ( window.ScreenRect.IsInside( hoverPos ) )

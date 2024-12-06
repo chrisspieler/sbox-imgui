@@ -12,6 +12,6 @@ public static partial class ImGui
 	{
 		var widget = new ButtonWidget( label );
 		widget.UpdateInput( Mouse );
-		return widget.IsActive;
+		return widget.IsReleased;
 	}
 }

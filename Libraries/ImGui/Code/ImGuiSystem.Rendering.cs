@@ -66,11 +66,18 @@ internal partial class ImGuiSystem
 		if ( !Game.IsPlaying )
 			return;
 
-		var windows = WindowDrawList;
-		foreach ( var window in windows )
+		Window focusedWindow = null;
+		foreach ( var window in CurrentDrawList.Windows )
 		{
+			if ( window.IsFocused )
+			{
+				focusedWindow = window;
+				continue;
+			}
 			window.Paint( Painter );
 		}
+		// Paint the focused window last.
+		focusedWindow?.Paint( Painter );
 		ClearWindows();
 	}
 }

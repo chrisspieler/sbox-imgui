@@ -5,7 +5,10 @@ namespace Duccsoft.ImGui;
 
 internal partial class ImGuiSystem
 {
-	public List<Window> WindowDrawList { get; init; } = new();
+	public DrawList CurrentDrawList { get; private set; } = new();
+	// Keep the previous frame's draw list so that we can check whether a widget
+	// drawn before a window was occluded by that window on the previous frame.
+	public DrawList PreviousDrawList { get; set; } = new();
 	private Stack<Window> WindowStack { get; init; } = new();
 
 	public Window CurrentWindow
@@ -30,11 +33,12 @@ internal partial class ImGuiSystem
 
 	public void ClearWindows()
 	{
-		WindowDrawList.Clear();
+		PreviousDrawList = CurrentDrawList;
+		CurrentDrawList = new();
 		WindowStack.Clear();
 	}
 
-	public void PushWindow( string name, Action onClose, ImGuiWindowFlags flags )
+	public void BeginWindow( string name, Action onClose, ImGuiWindowFlags flags )
 	{
 		NextWindow.Name = name;
 		WindowStack.Push( NextWindow );
@@ -43,12 +47,13 @@ internal partial class ImGuiSystem
 		NextWindow = new();
 	}
 
-	public void PushWidget( Widget widget )
+	public void AddWidget( Widget widget )
 	{
 		CursorScreenPosition = CurrentWindow.AddChild( widget );
+		CurrentDrawList.AddWidget( widget );
 	}
 
-	public void PopWindow()
+	public void EndWindow()
 	{
 		var popped = WindowStack.Pop();
 		if ( WindowStack.Count > 0 && popped.Name == FocusedWindow )
@@ -56,6 +61,6 @@ internal partial class ImGuiSystem
 			// TODO: Create a focus stack separate from draw order.
 			FocusedWindow = WindowStack.Peek().Name;
 		}
-		WindowDrawList.Add( popped );
+		CurrentDrawList.AddWindow( popped );
 	}
 }

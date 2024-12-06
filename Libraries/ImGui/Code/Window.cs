@@ -15,6 +15,7 @@ internal class Window
 		}
 	}
 	private string _name;
+	public int Id => HashCode.Combine( Name );
 	public bool IsHovered { get; private set; }
 	public bool IsFocused 
 	{
