@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Duccsoft.ImGui;
 
@@ -35,7 +36,7 @@ internal class Window : IUniqueId
 
 	public Action OnClose { get; set; }
 
-	public bool IsHovered { get; private set; }
+	public bool IsHovered { get; set; }
 	public bool IsFocused 
 	{
 		get => ImGuiSystem.Current.FocusedWindowId == Id; 

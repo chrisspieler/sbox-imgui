@@ -30,6 +30,17 @@ internal partial class ImGuiSystem
 	public Vector2 NextWindowSize { get; set; }
 	public bool ShouldFocusNextWindow { get; set; } = false;
 	public int? FocusedWindowId { get; private set; }
+	public Window FocusedWindow
+	{
+		get 
+		{
+			if ( !FocusedWindowId.HasValue )
+				return null;
+
+			return Window.Get( FocusedWindowId.Value );
+		}
+	}
+
 	public int ClickedWidgetId { get; set; }
 	public int CurrentWidgetCount => CurrentDrawList.WidgetIds.Values.Count;
 	public Widget CurrentWidget => CurrentWindow?.CurrentWidget;

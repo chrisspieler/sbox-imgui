@@ -1,4 +1,5 @@
 ﻿using Sandbox.UI;
+using System.Linq;
 
 namespace Duccsoft.ImGui;
 
@@ -71,7 +72,7 @@ internal partial class ImGuiSystem
 
 	private void UpdateWindowFocus()
 	{
-		HoveredWindow = GetHoveredWindow( MouseState.Position );
+		UpdateHoveredWindow();
 		if ( MouseState.LeftClickPressed )
 		{
 			Focus( HoveredWindow );
@@ -109,18 +110,29 @@ internal partial class ImGuiSystem
 		_middleClickReleased = false;
 	}
 
-	public Window GetHoveredWindow( Vector2 hoverPos, ImGuiHoveredFlags flags = default )
+	public void UpdateHoveredWindow()
 	{
-		if ( FocusedWindow?.IsMouseInScreenRect == true )
-			return FocusedWindow;
-		
-		Window hovered = null;
-		foreach ( var window in CurrentDrawList.Windows )
+		var windows = CurrentDrawList.Windows.ToArray();
+		var lastMouseOver = -1;
+		for ( int i = 0; i < windows.Length; i++ )
 		{
-			// The last non-focused window is guaranteed frontmost.
+			var window = windows[i];
+			window.IsHovered = false;
 			if ( window.IsMouseInScreenRect )
-				hovered = window;
+			{
+				lastMouseOver = i;
+				if ( window.IsFocused )
+				{
+					break;
+				}
+			}
 		}
-		return hovered;
+
+		if ( lastMouseOver < 0 )
+			return;
+
+		var hovered = windows[lastMouseOver];
+		hovered.IsHovered = true;
+		HoveredWindow = hovered;
 	}
 }
