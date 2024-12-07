@@ -1,4 +1,6 @@
-﻿namespace Duccsoft.ImGui;
+﻿using System;
+
+namespace Duccsoft.ImGui;
 
 public static partial class ImGui
 {
@@ -15,5 +17,11 @@ public static partial class ImGui
 		var widget = new ButtonWidget( CurrentWindow, label );
 		widget.UpdateInput( Mouse );
 		return widget.IsReleased;
+	}
+
+	public static bool SliderFloat( string label, Func<float> getter, Action<float> setter, float min, float max, string format = null, ImGuiSliderFlags flags = default )
+	{
+		_ = new SliderFloat( CurrentWindow, label, getter, setter, min, max, format );
+		return true;
 	}
 }

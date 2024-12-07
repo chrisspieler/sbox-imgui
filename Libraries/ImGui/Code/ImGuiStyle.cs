@@ -36,6 +36,12 @@ public class ImGuiStyle
 		set => _indentSpacing = value;
 	}
 	private float _indentSpacing = 21f;
+	public float GrabMinSize
+	{
+		get => _grabMinSize * UIScale;
+		set => _grabMinSize = value;
+	}
+	private float _grabMinSize = 12f;
 
 	public Dictionary<ImGuiCol, Color32> Colors = new();
 }

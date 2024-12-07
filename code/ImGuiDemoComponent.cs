@@ -7,6 +7,7 @@ public class ImGuiDemo : Component
 {
 	private int _clickCounter;
 	private bool _shouldDrawWindow2 = true;
+	private float _myFloatValue = 24f;
 
 	protected override void OnUpdate()
 	{
@@ -26,6 +27,7 @@ public class ImGuiDemo : Component
 			_clickCounter++;
 		}
 		ImGui.Text( "Clicked {0} times.", _clickCounter );
+		ImGui.SliderFloat( "My Float", () => _myFloatValue, v => _myFloatValue = v, -128f, 256f );
 		ImGui.End();
 	}
 

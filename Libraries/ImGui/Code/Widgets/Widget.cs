@@ -12,6 +12,7 @@ internal abstract class Widget : IUniqueId
 	}
 
 	public int Id { get; init; }
+	public ImGuiStyle Style => ImGui.GetStyle();
 
 	public Window Parent { get; set; }
 	public Vector2 ScreenPosition { get; set; }
