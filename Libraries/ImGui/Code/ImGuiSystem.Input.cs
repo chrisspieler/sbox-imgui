@@ -52,14 +52,16 @@ internal partial class ImGuiSystem
 		};
 	}
 
+	public Window HoveredWindow { get; set; }
+
 	private void UpdateWindowFocus()
 	{
-		var hoveredWindow = GetHoveredWindow( MouseState.Position );
-		foreach ( var window in CurrentDrawList.Windows )
+		HoveredWindow = GetHoveredWindow( MouseState.Position );
+		if ( MouseState.LeftClickPressed )
 		{
-			var isHovered = window == hoveredWindow;
-			window.UpdateInput( MouseState, isHovered );
+			Focus( HoveredWindow );
 		}
+		HoveredWindow?.UpdateInput( MouseState );
 	}
 
 	private void UpdateMouseState()

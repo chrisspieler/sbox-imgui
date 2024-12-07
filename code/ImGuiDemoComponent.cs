@@ -8,6 +8,7 @@ public class ImGuiDemo : Component
 	private int _clickCounter;
 	private bool _shouldDrawWindow2 = true;
 	private float _myFloatValue = 24f;
+	private bool _shouldFocusFloatingWindow = false;
 
 	protected override void OnUpdate()
 	{
@@ -27,6 +28,10 @@ public class ImGuiDemo : Component
 			_clickCounter++;
 		}
 		ImGui.Text( "Clicked {0} times.", _clickCounter );
+		if ( ImGui.Button( "Focus Floating Window" ) )
+		{
+			_shouldFocusFloatingWindow = true;
+		}
 		ImGui.SliderFloat( "My Float", () => _myFloatValue, v => _myFloatValue = v, -128f, 256f );
 		ImGui.End();
 	}
@@ -49,7 +54,9 @@ public class ImGuiDemo : Component
 	private void DrawWindowNoTitle()
 	{
 		ImGui.SetNextWindowPos( new Vector2( 500, 100 ) * ImGuiStyle.UIScale );
-		ImGui.Begin( "Window No Title", null, ImGuiWindowFlags.ImGuiWindowFlags_NoTitleBar );
+		var flags =	ImGuiWindowFlags.ImGuiWindowFlags_NoTitleBar
+				| ImGuiWindowFlags.ImGuiWindowFlags_NoFocusOnAppearing;
+		ImGui.Begin( "Window No Title", null, flags );
 		ImGui.Text( "This window has no title!" );
 		ImGui.Text( "Wow." );
 		ImGui.End();
@@ -78,7 +85,13 @@ public class ImGuiDemo : Component
 
 		ImGui.SetNextWindowPos( GetPosition() * ImGuiStyle.UIScale );
 		ImGui.SetNextWindowSize( GetSize() * ImGuiStyle.UIScale );
-		ImGui.Begin( "Test Window" );
+		if ( _shouldFocusFloatingWindow )
+		{
+			ImGui.SetNextWindowFocus();
+		}
+		var flags = ImGuiWindowFlags.ImGuiWindowFlags_NoFocusOnAppearing;
+		ImGui.Begin( "Floating Window", null, flags );
 		ImGui.End();
+		_shouldFocusFloatingWindow = false;
 	}
 }

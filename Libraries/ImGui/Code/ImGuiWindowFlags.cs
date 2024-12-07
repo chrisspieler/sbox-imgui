@@ -7,7 +7,7 @@ public enum ImGuiWindowFlags
 {
 	ImGuiWindowFlags_None						= 0, 
 	/// <summary>
-	/// If set, the window will have no title bar, which is useful for popups.
+	/// The window will have no title bar, which is useful for popups.
 	/// </summary>
 	ImGuiWindowFlags_NoTitleBar					= 1 << 0, /*
 	ImGuiWindowFlags_NoResize					= 1 << 1,
@@ -20,8 +20,11 @@ public enum ImGuiWindowFlags
 	ImGuiWindowFlags_NoSavedSettings			= 1 << 8,
 	ImGuiWindowFlags_NoMouseInputs				= 1 << 9, 
 	ImGuiWindowFlags_MenuBar					= 1 << 10,
-	ImGuiWindowFlags_HorizontalScrollbar		= 1 << 11,
-	ImGuiWindowFlags_NoFocusOnAppearing			= 1 << 12,
+	ImGuiWindowFlags_HorizontalScrollbar		= 1 << 11, */
+	/// <summary>
+	/// Prevent the window from taking focus when transitioning from hidden to visible state.
+	/// </summary>
+	ImGuiWindowFlags_NoFocusOnAppearing = 1 << 12, /*
 	ImGuiWindowFlags_NoBringToFrontOnFocus		= 1 << 13,
 	ImGuiWindowFlags_AlwaysVerticalScrollbar	= 1 << 14,
 	ImGuiWindowFlags_AlwaysHorizontalScrollbar	= 1 << 15,

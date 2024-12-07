@@ -25,12 +25,25 @@ internal partial class ImGuiSystem
 	public Vector2 NextWindowPosition { get; set; }
 	public Vector2 NextWindowPivot { get; set; }
 	public Vector2 NextWindowSize { get; set; }
-	public string FocusedWindow { get; private set; }
+	public bool ShouldFocusNextWindow { get; set; } = false;
+	public int? FocusedWindowId { get; private set; }
 	public int ClickedWidget { get; set; }
+
+	public Window GetPreviousWindow( int id )
+	{
+		PreviousDrawList.WindowIds.TryGetValue( id, out var previous );
+		return previous;
+	}
+
+	public Widget GetPreviousWidget( int id )
+	{
+		PreviousDrawList.WidgetIds.TryGetValue( id, out var previous );
+		return previous;
+	}
 
 	public void Focus( Window window )
 	{
-		FocusedWindow = window?.Name;
+		FocusedWindowId = window?.Id;
 	}
 
 	public void ClearWindows()
@@ -42,13 +55,26 @@ internal partial class ImGuiSystem
 
 	public void BeginWindow( string name, Action onClose, ImGuiWindowFlags flags )
 	{
-		var nextWindow = new Window( name, NextWindowPosition, NextWindowPivot, NextWindowSize, flags );
-		IdStack.Push( nextWindow.Id );
+		var next = new Window( name, NextWindowPosition, NextWindowPivot, NextWindowSize, flags );
+		IdStack.Push( next.Id );
+		WindowStack.Push( next );
+		if ( ShouldFocusNextWindow )
+		{
+			Focus( next );
+		}
+		if ( next.IsAppearing && !next.Flags.HasFlag( ImGuiWindowFlags.ImGuiWindowFlags_NoFocusOnAppearing ) )
+		{
+			Focus( next );
+		}
+		ResetNextWindowSettings();
+	}
+
+	private void ResetNextWindowSettings()
+	{
 		NextWindowPosition = default;
 		NextWindowPivot = default;
 		NextWindowSize = default;
-		WindowStack.Push( nextWindow );
-		FocusedWindow ??= nextWindow.Name;
+		ShouldFocusNextWindow = false;
 	}
 
 	public void AddWidget( Window window, Widget widget )
@@ -64,10 +90,10 @@ internal partial class ImGuiSystem
 	{
 		var popped = WindowStack.Pop();
 		IdStack.Pop();
-		if ( WindowStack.Count > 0 && popped.Name == FocusedWindow )
+		if ( WindowStack.Count > 0 && popped.Id == FocusedWindowId )
 		{
 			// TODO: Create a focus stack separate from draw order.
-			FocusedWindow = WindowStack.Peek().Name;
+			FocusedWindowId = WindowStack.Peek().Id;
 		}
 		CurrentDrawList.AddWindow( popped );
 	}

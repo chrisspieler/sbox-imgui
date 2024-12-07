@@ -45,4 +45,12 @@ public static partial class ImGui
 			window.CustomScreenSize = size;
 		}
 	}
+
+	/// <summary>
+	/// Causes the next window that is created to start focused. Should be called before Begin().
+	/// </summary>
+	public static void SetNextWindowFocus()
+	{
+		ImGuiSystem.Current.ShouldFocusNextWindow = true;
+	}
 }

@@ -9,7 +9,7 @@ internal class Window : IUniqueId
 	{
 		Name = name;
 		Id = ImGui.GetID( Name );
-		WindowFlags = flags;
+		Flags = flags;
 		ScreenPosition = screenPos;
 		Pivot = pivot;
 		CustomScreenSize = size;
@@ -23,26 +23,28 @@ internal class Window : IUniqueId
 
 	public int Id { get; init; }
 	public string Name { get; init; }
-	public ImGuiWindowFlags WindowFlags { get; init; }
+	public Window Previous => ImGuiSystem.Current.GetPreviousWindow( Id );
+	public ImGuiWindowFlags Flags { get; init; }
 
 	public Action OnClose { get; set; }
 
 	public bool IsHovered { get; private set; }
 	public bool IsFocused 
 	{
-		get => ImGuiSystem.Current.FocusedWindow == Name; 
+		get => ImGuiSystem.Current.FocusedWindowId == Id; 
 		set
 		{
 			if ( value )
 			{
 				ImGuiSystem.Current.Focus( this );
 			}
-			else if ( ImGuiSystem.Current.FocusedWindow == Name )
+			else if ( ImGuiSystem.Current.FocusedWindowId == Id )
 			{
 				ImGuiSystem.Current.Focus( null );
 			}
 		}
 	}
+	public bool IsAppearing => Previous is null;
 
 	#region Transform
 	/// <summary>
@@ -124,12 +126,8 @@ internal class Window : IUniqueId
 		}
 	}
 
-	public void UpdateInput( MouseState mouse, bool hovered )
+	public void UpdateInput( MouseState mouse )
 	{
-		IsHovered = hovered;
-		if ( hovered && mouse.LeftClickPressed )
-		{
-			IsFocused = true;
-		}
+		
 	}
 }
