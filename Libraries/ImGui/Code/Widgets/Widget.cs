@@ -13,12 +13,18 @@ internal abstract class Widget : IUniqueId
 
 	public int Id { get; init; }
 	public ImGuiStyle Style => ImGui.GetStyle();
-
-	public Window Parent { get; set; }
-	public Vector2 ScreenPosition { get; set; }
 	public bool IsActive => ImGuiSystem.Current.ClickedWidget == Id;
 	public bool IsHovered { get; set; }
-	public bool IsVisible { get; set; }
+	public Window Parent { get; set; }
+	public Vector2 ScreenPosition { get; set; }
+
+	#region History
+	// Because we don't know the layout of the screen until after everything has been drawn,
+	// we check the history of this widget to determine its likely state while building the UI.
+
+	public Widget Previous => ImGuiSystem.Current.GetPreviousWidget( Id );
+	public bool WasVisible => ImGuiSystem.Current.PreviousDrawList.IsVisible( Id );
+	#endregion
 
 	public abstract Vector2 GetSize();
 	public Rect GetScreenBounds() => new( ScreenPosition, GetSize() );
@@ -37,17 +43,10 @@ internal abstract class Widget : IUniqueId
 	{
 		IsHovered = false;
 
-		var wasWindowHovered = false;
-		var lastDrawList = ImGuiSystem.Current.PreviousDrawList;
-		if ( lastDrawList.WindowIds.TryGetValue( Parent.Id, out var lastWindow ) )
-		{
-			wasWindowHovered = lastWindow.IsHovered;
-		}
-
-		if ( !wasWindowHovered )
+		if ( Parent.Previous?.IsHovered != true )
 			return;
 
-		if ( !lastDrawList.IsVisible( Id ) )
+		if ( !WasVisible )
 			return;
 
 		if ( !GetScreenBounds().IsInside( mouse.Position ) )
