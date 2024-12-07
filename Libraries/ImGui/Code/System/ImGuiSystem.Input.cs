@@ -5,6 +5,24 @@ namespace Duccsoft.ImGui;
 internal partial class ImGuiSystem
 {
 	public MouseState MouseState { get; private set; }
+	/// <summary>
+	/// Filters in the current mouse state in to the "highest priority" button clicked,
+	/// returning null if no button is clicked.
+	/// </summary>
+	public ImGuiMouseButton? MouseButton
+	{
+		get
+		{
+			if ( MouseState.MiddleClickDown )
+				return ImGuiMouseButton.Middle;
+			else if ( MouseState.RightClickDown )
+				return ImGuiMouseButton.Right;
+			else if ( MouseState.LeftClickDown )
+				return ImGuiMouseButton.Left;
+
+			return null;
+		}
+	}
 
 	private bool _leftClickPressed { get; set; }
 	private bool _leftClickDown { get; set; }
@@ -81,7 +99,7 @@ internal partial class ImGuiSystem
 	{
 		if ( !_leftClickDown )
 		{
-			ClickedWidget = 0;
+			ClickedWidgetId = 0;
 		}
 		_leftClickPressed = false;
 		_leftClickReleased = false;

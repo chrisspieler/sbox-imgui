@@ -4,7 +4,12 @@ namespace Duccsoft.ImGui;
 
 public static partial class ImGui
 {
-	private static Window CurrentWindow => ImGuiSystem.Current.CurrentWindow;
+	private static Widget CurrentWidget => CurrentWindow?.CurrentWidget;
+
+	public static bool IsItemClicked( ImGuiMouseButton button = ImGuiMouseButton.Left )
+	{
+		return CurrentWidget.IsClicked( button );
+	}
 
 	public static void Text( string formatString, params object[] args )
 	{

@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace Duccsoft.ImGui;
+﻿namespace Duccsoft.ImGui;
 
 internal abstract class Widget : IUniqueId
 {
@@ -13,7 +11,7 @@ internal abstract class Widget : IUniqueId
 
 	public int Id { get; init; }
 	public ImGuiStyle Style => ImGui.GetStyle();
-	public bool IsActive => ImGuiSystem.Current.ClickedWidget == Id;
+	public bool IsActive => ImGuiSystem.Current.ClickedWidgetId == Id;
 	public bool IsHovered { get; set; }
 	public Window Parent { get; set; }
 	public Vector2 ScreenPosition { get; set; }
@@ -61,6 +59,18 @@ internal abstract class Widget : IUniqueId
 
 	public void Click( Vector2 screenPos )
 	{
-		ImGuiSystem.Current.ClickedWidget = Id;
+		ImGuiSystem.Current.ClickedWidgetId = Id;
+	}
+}
+
+internal static class WidgetExtensions
+{
+	public static bool IsClicked( this Widget widget, ImGuiMouseButton button )
+	{
+		var currentButton = ImGuiSystem.Current.MouseButton;
+		if ( currentButton is null || widget is null )
+			return false;
+
+		return ImGuiSystem.Current.ClickedWidgetId == widget.Id && currentButton == button;
 	}
 }

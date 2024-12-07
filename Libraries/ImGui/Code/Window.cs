@@ -74,6 +74,24 @@ internal class Window : IUniqueId
 	#region Layout
 	public Vector2 Padding => ImGui.GetStyle().WindowPadding;
 	public List<Widget> Children { get; set; } = new();
+	/// <summary>
+	/// Returns the current widget that is not a part of the window itself.
+	/// </summary>
+	public Widget CurrentWidget
+	{
+		get
+		{
+			var lastChildIdx = Children.Count - 1;
+			if ( lastChildIdx < 0 )
+				return null;
+
+			var lastChild = Children[lastChildIdx];
+			if ( lastChild is WindowTitleBar )
+				return null;
+
+			return lastChild;
+		}
+	}
 	public Rect ScreenRect
 	{
 		get

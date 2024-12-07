@@ -4,6 +4,8 @@ namespace Duccsoft.ImGui;
 
 public static partial class ImGui
 {
+	private static Window CurrentWindow => ImGuiSystem.Current.CurrentWindow;
+
 	public static bool Begin( string name, Action onClose = null, ImGuiWindowFlags flags = default )
 	{
 		System.BeginWindow( name, onClose, flags );

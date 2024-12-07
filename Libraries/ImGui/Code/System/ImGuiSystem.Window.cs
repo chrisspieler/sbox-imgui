@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Duccsoft.ImGui;
 
@@ -22,12 +23,16 @@ internal partial class ImGuiSystem
 			return WindowStack.Peek();
 		}
 	}
+	public int CurrentWindowCount => CurrentDrawList.WindowIds.Values.Count;
+
 	public Vector2 NextWindowPosition { get; set; }
 	public Vector2 NextWindowPivot { get; set; }
 	public Vector2 NextWindowSize { get; set; }
 	public bool ShouldFocusNextWindow { get; set; } = false;
 	public int? FocusedWindowId { get; private set; }
-	public int ClickedWidget { get; set; }
+	public int ClickedWidgetId { get; set; }
+	public int CurrentWidgetCount => CurrentDrawList.WidgetIds.Values.Count;
+	public Widget CurrentWidget => CurrentWindow?.CurrentWidget;
 
 	public Window GetPreviousWindow( int id )
 	{
