@@ -131,3 +131,33 @@ internal class Window : IUniqueId
 		
 	}
 }
+
+/// <summary>
+/// Some helper methods that also perform null checks.
+/// </summary>
+internal static class WindowExtensions
+{
+	public static bool IsAppearing( this Window window )
+	{
+		if ( window is null )
+			return false;
+
+		return ImGuiSystem.Current.IsWindowAppearing( window.Id );
+	}
+
+	public static bool IsFocused( this Window window, ImGuiFocusedFlags flags )
+	{
+		if ( window is null )
+			return false;
+
+		return ImGuiSystem.Current.IsWindowFocused( window.Id, flags );
+	}
+
+	public static bool IsHovered( this Window window, ImGuiHoveredFlags flags )
+	{
+		if ( window is null )
+			return false;
+
+		return ImGuiSystem.Current.IsWindowHovered( window.Id, flags );
+	}
+}

@@ -6,9 +6,13 @@ public static partial class ImGui
 {
 	public static bool Begin( string name, Action onClose = null, ImGuiWindowFlags flags = default )
 	{
-		ImGuiSystem.Current.BeginWindow( name, onClose, flags );
+		System.BeginWindow( name, onClose, flags );
 		return true;
 	}
+
+	public static bool IsWindowAppearing() => CurrentWindow.IsAppearing();
+	public static bool IsWindowFocused( ImGuiFocusedFlags flags ) => CurrentWindow.IsFocused( flags );
+	public static bool IsWindowHovered( ImGuiHoveredFlags flags ) => CurrentWindow.IsHovered( flags );
 
 	public static void End()
 	{

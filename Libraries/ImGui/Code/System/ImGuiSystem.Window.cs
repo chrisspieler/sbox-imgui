@@ -41,6 +41,27 @@ internal partial class ImGuiSystem
 		return previous;
 	}
 
+	public bool IsWindowAppearing( int id )
+	{
+		return GetPreviousWindow( id ) is null;
+	}
+
+	public bool IsWindowFocused( int id, ImGuiFocusedFlags flags = default )
+	{
+		if ( FocusedWindowId is null )
+			return false;
+
+		return FocusedWindowId == id;
+	}
+
+	public bool IsWindowHovered( int id, ImGuiHoveredFlags flags = default )
+	{
+		if ( HoveredWindow is null )
+			return false;
+
+		return HoveredWindow.Id == id;
+	}
+
 	public void Focus( Window window )
 	{
 		FocusedWindowId = window?.Id;
