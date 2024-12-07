@@ -21,6 +21,13 @@ internal class Window : IUniqueId
 		ImGuiSystem.Current.CursorScreenPosition += ImGui.GetStyle().WindowPadding;
 	}
 
+	public static Window Get( int id )
+	{
+		var drawList = ImGuiSystem.Current.CurrentDrawList;
+		drawList.WindowIds.TryGetValue( id, out var window );
+		return window;
+	}
+
 	public int Id { get; init; }
 	public string Name { get; init; }
 	public Window Previous => ImGuiSystem.Current.GetPreviousWindow( Id );
@@ -45,6 +52,13 @@ internal class Window : IUniqueId
 		}
 	}
 	public bool IsAppearing => Previous is null;
+	public bool IsMouseInScreenRect
+	{
+		get
+		{
+			return ScreenRect.IsInside( ImGuiSystem.Current.MouseState.Position );
+		}
+	}
 
 	#region Transform
 	/// <summary>

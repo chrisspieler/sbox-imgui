@@ -109,13 +109,16 @@ internal partial class ImGuiSystem
 		_middleClickReleased = false;
 	}
 
-	private Window GetHoveredWindow( Vector2 hoverPos )
+	public Window GetHoveredWindow( Vector2 hoverPos, ImGuiHoveredFlags flags = default )
 	{
+		if ( FocusedWindow?.IsMouseInScreenRect == true )
+			return FocusedWindow;
+		
 		Window hovered = null;
 		foreach ( var window in CurrentDrawList.Windows )
 		{
-			// Since the window list was filled back-to-front, the last window is guaranteed frontmost.
-			if ( window.ScreenRect.IsInside( hoverPos ) )
+			// The last non-focused window is guaranteed frontmost.
+			if ( window.IsMouseInScreenRect )
 				hovered = window;
 		}
 		return hovered;
