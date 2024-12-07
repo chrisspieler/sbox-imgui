@@ -109,8 +109,8 @@ internal class Window : IUniqueId
 	}
 	#endregion
 
-	public static Color32 BackgroundColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_WindowBg );
-	public static Color32 BorderColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_Border );
+	public static Color32 BackgroundColor => ImGui.GetColorU32( ImGuiCol.WindowBg );
+	public static Color32 BorderColor => ImGui.GetColorU32( ImGuiCol.Border );
 
 	public Rect AddChild( Widget childWidget )
 	{

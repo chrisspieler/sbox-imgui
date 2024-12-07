@@ -15,14 +15,14 @@ internal class ButtonWidget : Widget
 
 	public override void Paint( ImGuiPainter painter )
 	{
-		var buttonColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_Button );
+		var buttonColor = ImGui.GetColorU32( ImGuiCol.Button );
 		if ( IsActive )
 		{
-			buttonColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_ButtonActive );
+			buttonColor = ImGui.GetColorU32( ImGuiCol.ButtonActive );
 		}
 		else if ( IsHovered )
 		{
-			buttonColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_ButtonHovered );
+			buttonColor = ImGui.GetColorU32( ImGuiCol.ImGuiColButtonHovered );
 		}
 		painter.DrawRect( GetScreenBounds(), buttonColor );
 		painter.DrawText( Label, ScreenPosition + GetSize() * 0.5f );

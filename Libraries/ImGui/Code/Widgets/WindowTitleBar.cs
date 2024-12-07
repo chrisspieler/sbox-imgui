@@ -7,8 +7,8 @@ internal class WindowTitleBar : Widget
 		Show();
 	}
 
-	public static Color32 TitleActiveColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_TitleBgActive );
-	public static Color32 TitleInactiveColor => ImGui.GetColorU32( ImGuiCol.ImGuiCol_TitleBg );
+	public static Color32 TitleActiveColor => ImGui.GetColorU32( ImGuiCol.TitleBgActive );
+	public static Color32 TitleInactiveColor => ImGui.GetColorU32( ImGuiCol.TitleBg );
 
 	public override Vector2 GetSize() => GetTitleTextSize() * new Vector2( 2, 1 );
 

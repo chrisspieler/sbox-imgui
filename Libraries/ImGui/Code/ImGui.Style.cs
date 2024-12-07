@@ -28,19 +28,19 @@ public static partial class ImGui
 			return;
 
 		style.Colors ??= new();
-		style.Colors[ImGuiCol.ImGuiCol_WindowBg]			= new( 0x0F, 0x0F, 0x0F, 240 );
-		style.Colors[ImGuiCol.ImGuiCol_Border]				= new( 0x42, 0x42, 0x4C, 128 );
-		style.Colors[ImGuiCol.ImGuiCol_Text]				= new( 0xFF, 0xFF, 0xFF );
-		style.Colors[ImGuiCol.ImGuiCol_TitleBg]				= new( 0x0A, 0x0A, 0x0A );
-		style.Colors[ImGuiCol.ImGuiCol_TitleBgActive]		= new( 0x29, 0x4A, 0x7A );
-		style.Colors[ImGuiCol.ImGuiCol_Button]				= new( 66, 150, 250, 102 );
-		style.Colors[ImGuiCol.ImGuiCol_ButtonHovered]		= new( 66, 150, 250 );
-		style.Colors[ImGuiCol.ImGuiCol_ButtonActive]		= new( 15, 135, 250 );
-		style.Colors[ImGuiCol.ImGuiCol_FrameBg]				= new( 41, 74, 122, 138 );
-		style.Colors[ImGuiCol.ImGuiCol_FrameBgHovered]		= new( 66, 150, 250, 102 );
-		style.Colors[ImGuiCol.ImGuiCol_FrameBgActive]		= new( 66, 150, 250, 171 );
-		style.Colors[ImGuiCol.ImGuiCol_SliderGrab]			= new( 61, 133, 244 );
-		style.Colors[ImGuiCol.ImGuiCol_SliderGrabActive]	= new( 66, 150, 250, 255 );
+		style.Colors[ImGuiCol.WindowBg]			= new( 0x0F, 0x0F, 0x0F, 240 );
+		style.Colors[ImGuiCol.Border]				= new( 0x42, 0x42, 0x4C, 128 );
+		style.Colors[ImGuiCol.Text]				= new( 0xFF, 0xFF, 0xFF );
+		style.Colors[ImGuiCol.TitleBg]				= new( 0x0A, 0x0A, 0x0A );
+		style.Colors[ImGuiCol.TitleBgActive]		= new( 0x29, 0x4A, 0x7A );
+		style.Colors[ImGuiCol.Button]				= new( 66, 150, 250, 102 );
+		style.Colors[ImGuiCol.ImGuiColButtonHovered]		= new( 66, 150, 250 );
+		style.Colors[ImGuiCol.ButtonActive]		= new( 15, 135, 250 );
+		style.Colors[ImGuiCol.FrameBg]				= new( 41, 74, 122, 138 );
+		style.Colors[ImGuiCol.FrameBgHovered]		= new( 66, 150, 250, 102 );
+		style.Colors[ImGuiCol.FrameBgActive]		= new( 66, 150, 250, 171 );
+		style.Colors[ImGuiCol.SliderGrab]			= new( 61, 133, 244 );
+		style.Colors[ImGuiCol.SliderGrabActive]	= new( 66, 150, 250, 255 );
 	}
 	#endregion
 }

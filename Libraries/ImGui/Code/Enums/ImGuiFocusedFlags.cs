@@ -11,5 +11,5 @@ public enum ImGuiFocusedFlags
 	AnyWindow				= 1 << 2,  
 	NoPopupHierarchy		= 1 << 3, 
 	DockHierarchy			= 1 << 4, 
-	RootAndChildWindows		= ImGuiFocusedFlags_RootWindow | ImGuiFocusedFlags_ChildWindows, */
+	RootAndChildWindows		= RootWindow | ChildWindows, */
 };

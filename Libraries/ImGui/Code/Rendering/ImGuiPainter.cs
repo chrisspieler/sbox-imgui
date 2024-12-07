@@ -22,14 +22,14 @@ internal readonly ref struct ImGuiPainter
 
 	public readonly void DrawText( in string text, in Rect rect )
 	{
-		var textColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_Text );
+		var textColor = ImGui.GetColorU32( ImGuiCol.Text );
 		var scope = new TextRendering.Scope( text, textColor, ImGui.GetFontSize(), "Consolas" );
 		_hudPainter.DrawText( scope, rect );
 	}
 
 	public readonly void DrawText( in string text, in Vector2 position, TextFlag flags = TextFlag.Center )
 	{
-		var textColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_Text );
+		var textColor = ImGui.GetColorU32( ImGuiCol.Text );
 		var scope = new TextRendering.Scope( text, textColor, ImGui.GetFontSize(), "Consolas" );
 		_hudPainter.DrawText( scope, position, flags );
 	}

@@ -37,24 +37,24 @@ internal class SliderFloat : Widget
 	public override void Paint( ImGuiPainter painter )
 	{
 		var bgRect = new Rect( ScreenPosition, GetSize() );
-		var bgColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_FrameBg );
+		var bgColor = ImGui.GetColorU32( ImGuiCol.FrameBg );
 		if ( IsActive )
 		{
-			bgColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_FrameBgActive );
+			bgColor = ImGui.GetColorU32( ImGuiCol.FrameBgActive );
 		}
 		else if ( IsHovered )
 		{
-			bgColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_FrameBgHovered );
+			bgColor = ImGui.GetColorU32( ImGuiCol.FrameBgHovered );
 		}
 		painter.DrawRect( bgRect, bgColor );
 
 		var grabSize = new Vector2( Style.GrabMinSize, ImGui.GetFrameHeight() ) ;
 		var xGrabPos = Value.Remap( MinValue, MaxValue, 0f, bgRect.Size.x );
 		var grabPos = ScreenPosition + new Vector2( xGrabPos, Style.FramePadding.y * 0.5f );
-		var grabColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_SliderGrab );
+		var grabColor = ImGui.GetColorU32( ImGuiCol.SliderGrab );
 		if ( IsActive )
 		{
-			grabColor = ImGui.GetColorU32( ImGuiCol.ImGuiCol_SliderGrabActive );
+			grabColor = ImGui.GetColorU32( ImGuiCol.SliderGrabActive );
 		}
 		painter.DrawRect( new Rect( grabPos, grabSize ), grabColor );
 

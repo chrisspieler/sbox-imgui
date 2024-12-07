@@ -31,8 +31,8 @@ public enum ImGuiWindowFlags
 	NoNavInputs					= 1 << 16,
 	NoNavFocus					= 1 << 17,
 	UnsavedDocument				= 1 << 18,
-	NoNav						= ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoNavFocus,
-	NoDecoration				= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse,
-	NoInputs					= ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoNavFocus,
+	NoNav						= NoNavInputs | NoNavFocus,
+	NoDecoration				= NoTitleBar | NoResize | NoScrollbar | NoCollapse,
+	NoInputs					= NoMouseInputs | NoNavInputs | NoNavFocus,
 	*/
 }
