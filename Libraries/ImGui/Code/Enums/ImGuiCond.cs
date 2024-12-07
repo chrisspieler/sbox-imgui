@@ -5,9 +5,9 @@ namespace Duccsoft;
 [Flags]
 public enum ImGuiCond
 {
-	ImGuiCond_None			= 0,        /*
-	ImGuiCond_Always		= 1 << 0,   
-	ImGuiCond_Once			= 1 << 1,   
-	ImGuiCond_FirstUseEver	= 1 << 2,   
-	ImGuiCond_Appearing		= 1 << 3,   */
+	None			= 0,        /*
+	Always			= 1 << 0,   
+	Once			= 1 << 1,   
+	FirstUseEver	= 1 << 2,   
+	Appearing		= 1 << 3,   */
 };

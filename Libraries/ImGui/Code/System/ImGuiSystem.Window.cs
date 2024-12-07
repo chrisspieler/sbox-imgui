@@ -88,7 +88,7 @@ internal partial class ImGuiSystem
 		{
 			Focus( next );
 		}
-		if ( next.IsAppearing && !next.Flags.HasFlag( ImGuiWindowFlags.ImGuiWindowFlags_NoFocusOnAppearing ) )
+		if ( next.IsAppearing && !next.Flags.HasFlag( ImGuiWindowFlags.NoFocusOnAppearing ) )
 		{
 			Focus( next );
 		}

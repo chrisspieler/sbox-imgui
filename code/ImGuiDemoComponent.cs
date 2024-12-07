@@ -54,8 +54,8 @@ public class ImGuiDemo : Component
 	private void DrawWindowNoTitle()
 	{
 		ImGui.SetNextWindowPos( new Vector2( 500, 100 ) * ImGuiStyle.UIScale );
-		var flags =	ImGuiWindowFlags.ImGuiWindowFlags_NoTitleBar
-				| ImGuiWindowFlags.ImGuiWindowFlags_NoFocusOnAppearing;
+		var flags =	ImGuiWindowFlags.NoTitleBar
+				| ImGuiWindowFlags.NoFocusOnAppearing;
 		ImGui.Begin( "Window No Title", null, flags );
 		ImGui.Text( "This window has no title!" );
 		ImGui.Text( "Wow." );
@@ -89,7 +89,7 @@ public class ImGuiDemo : Component
 		{
 			ImGui.SetNextWindowFocus();
 		}
-		var flags = ImGuiWindowFlags.ImGuiWindowFlags_NoFocusOnAppearing;
+		var flags = ImGuiWindowFlags.NoFocusOnAppearing;
 		ImGui.Begin( "Floating Window", null, flags );
 		ImGui.End();
 		_shouldFocusFloatingWindow = false;

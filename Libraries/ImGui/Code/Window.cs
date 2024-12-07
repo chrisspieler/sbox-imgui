@@ -14,7 +14,7 @@ internal class Window : IUniqueId
 		Pivot = pivot;
 		CustomScreenSize = size;
 		ImGuiSystem.Current.CursorScreenPosition = ScreenRect.Position;
-		if ( !flags.HasFlag( ImGuiWindowFlags.ImGuiWindowFlags_NoTitleBar ) )
+		if ( !flags.HasFlag( ImGuiWindowFlags.NoTitleBar ) )
 		{
 			_ = new WindowTitleBar( this );
 		}
