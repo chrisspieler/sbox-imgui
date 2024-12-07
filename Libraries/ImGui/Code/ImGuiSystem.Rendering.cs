@@ -10,9 +10,6 @@ internal partial class ImGuiSystem
 		{
 			Flags = CommandList.Flag.Hud
 		};
-
-		Listen( Stage.StartUpdate, 0, Clear, "ImGui Clear" );
-		Listen( Stage.FinishUpdate, 100, Draw, "ImGui Draw" );
 	}
 
 	public bool UseSceneCamera { get; } = true;
@@ -22,7 +19,7 @@ internal partial class ImGuiSystem
 	public CommandList CommandList { get; private set; }
 	public Sandbox.Rendering.Stage RenderingStage { get; set; } = Sandbox.Rendering.Stage.AfterPostProcess;
 
-	private void Clear()
+	private void ClearCommandList()
 	{
 		if ( !Game.IsPlaying )
 			return;

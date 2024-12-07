@@ -21,9 +21,6 @@ internal partial class ImGuiSystem
 	private void InitInput()
 	{
 		CreatePassthrough();
-		Listen( Stage.StartUpdate, 0, UpdateMouseState, "ImGui Update Input" );
-		Listen( Stage.FinishUpdate, 50, UpdateWindowFocus, "ImGui Window Focus" );
-		Listen( Stage.FinishUpdate, 55, ClearInputState, "ImGui Clear Input" );
 	}
 	private void CreatePassthrough()
 	{
@@ -64,7 +61,7 @@ internal partial class ImGuiSystem
 		HoveredWindow?.UpdateInput( MouseState );
 	}
 
-	private void UpdateMouseState()
+	private void UpdateInputState()
 	{
 		MouseState = new MouseState()
 		{
