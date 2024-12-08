@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sandbox;
+using System;
 
 namespace Duccsoft.ImGui;
 
@@ -34,6 +35,20 @@ internal class SliderFloat : Widget
 		return new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
 	}
 
+	public override void UpdateInput( MouseState mouse )
+	{
+		base.UpdateInput( mouse );
+
+		if ( IsActive )
+		{
+			var xPosMin = ScreenPosition.x;
+			var xPosMax = ScreenPosition.x + GetSize().x;
+			var dragProgress = MathX.LerpInverse( ImGui.GetMousePos().x, xPosMin, xPosMax );
+			var targetValue = MathX.Lerp( MinValue, MaxValue, dragProgress );
+			ValueSetter( targetValue );
+		}
+	}
+
 	public override void Paint( ImGuiPainter painter )
 	{
 		// Paint background
@@ -48,15 +63,6 @@ internal class SliderFloat : Widget
 			bgColor = ImGui.GetColorU32( ImGuiCol.FrameBgHovered );
 		}
 		painter.DrawRect( bgRect, bgColor );
-
-		if ( IsActive )
-		{
-			var xPosMin = bgRect.Position.x;
-			var xPosMax = bgRect.Position.x + bgRect.Size.x;
-			var dragProgress = MathX.LerpInverse( ImGui.GetMousePos().x, xPosMin, xPosMax );
-			var targetValue = MathX.Lerp( MinValue, MaxValue, dragProgress );
-			ValueSetter( targetValue );
-		}
 
 		// Paint grab
 		var grabSize = new Vector2( Style.GrabMinSize, ImGui.GetFrameHeight() ) ;
