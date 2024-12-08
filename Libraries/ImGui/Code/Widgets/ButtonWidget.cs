@@ -11,7 +11,7 @@ internal class ButtonWidget : Widget
 
 	public string Label { get; set; }
 	public bool IsReleased { get; set; }
-	public override Vector2 GetSize() => ImGui.CalcTextSize( Label ) + ImGui.GetStyle().FramePadding;
+	public override Vector2 Size => ImGui.CalcTextSize( Label ) + ImGui.GetStyle().FramePadding;
 
 	public override void Paint( ImGuiPainter painter )
 	{
@@ -25,7 +25,7 @@ internal class ButtonWidget : Widget
 			buttonColor = ImGui.GetColorU32( ImGuiCol.ImGuiColButtonHovered );
 		}
 		painter.DrawRect( ScreenRect, buttonColor );
-		painter.DrawText( Label, ScreenPosition + GetSize() * 0.5f );
+		painter.DrawText( Label, ScreenPosition + Size * 0.5f );
 	}
 
 	public override void UpdateInput()

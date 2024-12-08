@@ -10,10 +10,7 @@ internal class TextWidget : Widget
 
 	public string Text { get; set; }
 
-	public override Vector2 GetSize()
-	{
-		return ImGui.CalcTextSize( Text );
-	}
+	public override Vector2 Size => ImGui.CalcTextSize( Text );
 
 	public override void Paint( ImGuiPainter painter )
 	{

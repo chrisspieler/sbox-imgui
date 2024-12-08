@@ -38,10 +38,36 @@ public static partial class ImGui
 	public static float GetCursorPosX() => GetCursorPos().x;
 	public static float GetCursorPosY() => GetCursorPos().y;
 
+	public static void SetCursorPos( Vector2 localPos )
+	{
+		if ( CurrentWindow is null )
+			return;
+
+		CurrentWindow.CursorPosition = localPos;
+	}
+
+	public static void SetCursorPosX( float localX )
+	{
+		if ( CurrentWindow is null )
+			return;
+
+		CurrentWindow.CursorPosition = CurrentWindow.CursorPosition.WithX( localX );
+	}
+
+	public static void SetCursorPosY( float localY )
+	{
+		if ( CurrentWindow is null )
+			return;
+
+		CurrentWindow.CursorPosition = CurrentWindow.CursorPosition.WithY( localY );
+	}
+
 	public static Vector2 GetCursorStartPos()
 	{
-		// TODO: Store start position separately from screen position to account for vertical layouts and padding.
-		throw new NotImplementedException();
+		if ( CurrentWindow is null )
+			return default;
+
+		return CurrentWindow.CursorStartPosition;
 	}
 
 	public static void NewLine()
@@ -49,14 +75,32 @@ public static partial class ImGui
 		if ( CurrentWidget is null )
 			return;
 
-		var widgetRect = CurrentWidget.ScreenRect;
-		var cursorOffset = new Vector2( 0f, widgetRect.Size.y + GetStyle().ItemSpacing.y );
-		SetCursorScreenPos( widgetRect.Position + cursorOffset );
+		var yOffset = CurrentWidget.Position.y + CurrentWidget.Size.y + GetStyle().ItemSpacing.y;
+		SetCursorPos( new Vector2( GetCursorStartPos().x, yOffset ) );
 	}
 
 	public static void SameLine( float offsetFromStartX = 0f, float spacing = -1f )
 	{
-		// TODO: Calculate the next cursor position on the same line.
-		throw new NotImplementedException();
+		if ( CurrentWidget is null )
+			return;
+
+
+		if ( offsetFromStartX != 0 )
+		{
+			if ( spacing < 0f )
+				spacing = 0f;
+
+			var xPos = offsetFromStartX + spacing;
+			var yPos = CurrentWidget.Position.y;
+			SetCursorPos( new Vector2( xPos, yPos ) );
+		}
+		else
+		{
+			if ( spacing < 0f )
+				spacing = GetStyle().ItemSpacing.x;
+
+			var cursorOffset = new Vector2( CurrentWidget.Size.x + spacing, 0f );
+			SetCursorPos( CurrentWidget.Position + cursorOffset );
+		}
 	}
 }

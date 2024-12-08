@@ -30,10 +30,7 @@ internal class SliderFloat : Widget
 	public float MaxValue { get; set; } = 256f;
 	public string Format { get; set; } = null;
 
-	public override Vector2 GetSize()
-	{
-		return new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
-	}
+	public override Vector2 Size => new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
 
 	public override void UpdateInput()
 	{
@@ -42,7 +39,7 @@ internal class SliderFloat : Widget
 		if ( IsActive )
 		{
 			var xPosMin = ScreenPosition.x;
-			var xPosMax = ScreenPosition.x + GetSize().x;
+			var xPosMax = ScreenPosition.x + Size.x;
 			var dragProgress = MathX.LerpInverse( ImGui.GetMousePos().x, xPosMin, xPosMax );
 			var targetValue = MathX.Lerp( MinValue, MaxValue, dragProgress );
 			ValueSetter( targetValue );
@@ -52,7 +49,7 @@ internal class SliderFloat : Widget
 	public override void Paint( ImGuiPainter painter )
 	{
 		// Paint background
-		var bgRect = new Rect( ScreenPosition, GetSize() );
+		var bgRect = new Rect( ScreenPosition, Size );
 		var bgColor = ImGui.GetColorU32( ImGuiCol.FrameBg );
 		if ( IsActive )
 		{

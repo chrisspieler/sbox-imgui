@@ -19,9 +19,10 @@ internal class Window : IUniqueId
 		if ( !flags.HasFlag( ImGuiWindowFlags.NoTitleBar ) )
 		{
 			var titleBar = new WindowTitleBar( this );
-			CursorPosition += new Vector2( 0f, titleBar.GetSize().y );
+			CursorPosition += new Vector2( 0f, titleBar.Size.y );
 		}
 		CursorPosition += ImGui.GetStyle().WindowPadding;
+		CursorStartPosition = CursorPosition;
 	}
 
 	public static Window Get( int id )
@@ -86,6 +87,7 @@ internal class Window : IUniqueId
 	public Vector2 CustomScreenSize { get; set; }
 	public Rect ContentRect => new( ScreenRect.Position + Padding, ContentScreenSize );
 	public Vector2 ContentScreenSize { get; private set; }
+	public Vector2 CursorStartPosition { get; set; }
 	public Vector2 CursorPosition { get; set; }
 	#endregion
 
@@ -137,7 +139,7 @@ internal class Window : IUniqueId
 	public void AddChild( Widget childWidget )
 	{
 		childWidget.Parent = this;
-		childWidget.LocalPosition = CursorPosition;
+		childWidget.Position = CursorPosition;
 		Children.Add( childWidget );
 		var childRect = childWidget.ScreenRect;
 		var size = childRect.Size;

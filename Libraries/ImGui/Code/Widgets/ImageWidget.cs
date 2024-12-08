@@ -22,7 +22,7 @@ internal class ImageWidget : Widget
 	public Color TintColor { get; set; }
 	public Color BorderColor { get; set; }
 
-	public override Vector2 GetSize() => ImageSize;
+	public override Vector2 Size => ImageSize;
 
     public override void Paint(ImGuiPainter painter)
     {
