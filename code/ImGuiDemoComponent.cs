@@ -41,9 +41,9 @@ public class ImGuiDemo : Component
 		if ( !_shouldDrawWindow2 )
 			return;
 
+		ImGui.SetNextWindowPos( new Vector2( 150, 250 ) * ImGuiStyle.UIScale );
 		if ( ImGui.Begin( "Window 2", onClose: () => _shouldDrawWindow2 = false ) )
 		{
-			ImGui.SetWindowPos( new Vector2( 150, 250 ) * ImGuiStyle.UIScale );
 			ImGui.Text( "Hello," );
 			ImGui.Text( "World!" );
 			ImGui.Text( "How's it going, everyone?" );

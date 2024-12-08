@@ -1,4 +1,6 @@
-﻿namespace Duccsoft.ImGui;
+﻿using static Sandbox.VertexLayout;
+
+namespace Duccsoft.ImGui;
 
 internal class WindowTitleBar : Widget
 {
@@ -14,11 +16,24 @@ internal class WindowTitleBar : Widget
 
 	private Rect GetTitleBarRect()
 	{
-		var textPanelSize = new Vector2( Parent.ScreenRect.Width, ImGui.GetFrameHeightWithSpacing() );
-		return new Rect( Parent.ScreenRect.Position, textPanelSize );
+		var size = new Vector2( Parent.ScreenRect.Width, ImGui.GetFrameHeightWithSpacing() );
+		return new Rect( Parent.ScreenRect.Position, size );
 	}
 
 	private Vector2 GetTitleTextSize() => ImGui.CalcTextSize( Parent.Name ) + ImGui.GetStyle().FramePadding * 2;
+
+	public override void UpdateInput()
+	{
+		base.UpdateInput();
+		Parent.IsDragged = IsActive;
+		if ( IsActive )
+		{
+			if ( MouseState.LeftClickPressed || MouseState.LeftClickReleased )
+			{
+				ImGuiSystem.Current.CustomWindowPositions[Parent.Id] = Parent.ScreenRect.Position;
+			}
+		}
+	}
 
 	public override void Paint( ImGuiPainter painter )
 	{

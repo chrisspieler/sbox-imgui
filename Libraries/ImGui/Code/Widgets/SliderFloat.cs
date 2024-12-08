@@ -35,9 +35,9 @@ internal class SliderFloat : Widget
 		return new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
 	}
 
-	public override void UpdateInput( MouseState mouse )
+	public override void UpdateInput()
 	{
-		base.UpdateInput( mouse );
+		base.UpdateInput();
 
 		if ( IsActive )
 		{

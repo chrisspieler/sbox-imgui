@@ -53,7 +53,7 @@ internal class DrawList
 				return true;
 			}
 
-			var widgetBounds = widget.GetScreenBounds();
+			var widgetBounds = widget.ScreenRect;
 
 			// Check whether a window rendered later than this widget has fully obscured this widget.
 			if ( window.ScreenRect.IsInside( widgetBounds, fullyInside: true ) )

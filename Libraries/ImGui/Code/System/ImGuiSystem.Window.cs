@@ -10,8 +10,9 @@ internal partial class ImGuiSystem
 	// Keep the previous frame's draw list so that we can check whether a widget
 	// drawn before a window was occluded by that window on the previous frame.
 	public DrawList PreviousDrawList { get; set; } = new();
-	private Stack<Window> WindowStack { get; init; } = new();
-	public IdStack IdStack { get; set; } = new();
+	public Stack<Window> WindowStack { get; private init; } = new();
+	public IdStack IdStack { get; private init; } = new();
+	public Dictionary<int, Vector2> CustomWindowPositions { get; private set; } = new();
 
 	public Window CurrentWindow
 	{
@@ -92,9 +93,11 @@ internal partial class ImGuiSystem
 
 	public void BeginWindow( string name, Action onClose, ImGuiWindowFlags flags )
 	{
+		if ( CustomWindowPositions.TryGetValue( ImGui.GetID( name ), out var customPos ) )
+		{
+			NextWindowPosition = customPos;
+		}
 		var next = new Window( name, NextWindowPosition, NextWindowPivot, NextWindowSize, flags );
-		IdStack.Push( next.Id );
-		WindowStack.Push( next );
 		if ( ShouldFocusNextWindow )
 		{
 			Focus( next );

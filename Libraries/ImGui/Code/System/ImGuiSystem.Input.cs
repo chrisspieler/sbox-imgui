@@ -5,7 +5,6 @@ namespace Duccsoft.ImGui;
 
 internal partial class ImGuiSystem
 {
-	public MouseState MouseState { get; private set; }
 	/// <summary>
 	/// Filters in the current mouse state in to the "highest priority" button clicked,
 	/// returning null if no button is clicked.
@@ -25,16 +24,6 @@ internal partial class ImGuiSystem
 		}
 	}
 
-	private bool _leftClickPressed { get; set; }
-	private bool _leftClickDown { get; set; }
-	private bool _leftClickReleased { get; set; }
-	private bool _rightClickPressed { get; set; }
-	private bool _rightClickDown { get; set; }
-	private bool _rightClickReleased { get; set; }
-	private bool _middleClickPressed { get; set; }
-	private bool _middleClickDown { get; set; }
-	private bool _middleClickReleased { get; set; }
-
 	private PassthroughPanel _inputPanel;
 
 	private void InitInput()
@@ -50,21 +39,33 @@ internal partial class ImGuiSystem
 		_inputPanel.Style.PointerEvents = PointerEvents.All;
 		_inputPanel.LeftClick += p =>
 		{
-			_leftClickPressed = p;
-			_leftClickDown = p;
-			_leftClickReleased = !p;
+			if ( p )
+			{
+				MouseState.LeftClickPosition = Mouse.Position;
+			}
+			MouseState.LeftClickPressed = p;
+			MouseState.LeftClickDown = p;
+			MouseState.LeftClickReleased = !p;
 		};
 		_inputPanel.RightClick += p =>
 		{
-			_rightClickPressed = p;
-			_rightClickDown = p;
-			_rightClickReleased = !p;
+			if ( p )
+			{
+				MouseState.RightClickPosition = Mouse.Position;
+			}
+			MouseState.RightClickPressed = p;
+			MouseState.RightClickDown = p;
+			MouseState.RightClickReleased = !p;
 		};
 		_inputPanel.MiddleClick += p =>
 		{
-			_middleClickPressed = p;
-			_middleClickDown = p;
-			_middleClickReleased = !p;
+			if ( p )
+			{
+				MouseState.MiddleClickPosition = Mouse.Position;
+			}
+			MouseState.MiddleClickPressed = p;
+			MouseState.MiddleClickDown = p;
+			MouseState.MiddleClickReleased = !p;
 		};
 	}
 
@@ -77,37 +78,26 @@ internal partial class ImGuiSystem
 		{
 			Focus( HoveredWindow );
 		}
-		HoveredWindow?.UpdateInput( MouseState );
+		HoveredWindow?.UpdateInput();
 	}
 
 	private void UpdateInputState()
 	{
-		MouseState = new MouseState()
-		{
-			Position = Mouse.Position,
-			LeftClickPressed = _leftClickPressed,
-			LeftClickDown = _leftClickDown,
-			LeftClickReleased = _leftClickReleased,
-			RightClickPressed = _rightClickPressed,
-			RightClickDown = _rightClickDown,
-			RightClickReleased = _rightClickReleased,
-			MiddleClickPressed = _middleClickPressed,
-			MiddleClickDown = _middleClickDown,
-			MiddleClickReleased = _middleClickReleased,
-		};
+		MouseState.Position = Mouse.Position;
 	}
+
 	private void ClearInputState()
 	{
-		if ( !_leftClickDown )
+		if ( !MouseState.LeftClickDown )
 		{
 			ClickedWidgetId = 0;
 		}
-		_leftClickPressed = false;
-		_leftClickReleased = false;
-		_rightClickPressed = false;
-		_rightClickReleased = false;
-		_middleClickPressed = false;
-		_middleClickReleased = false;
+		MouseState.LeftClickPressed = false;
+		MouseState.LeftClickReleased = false;
+		MouseState.RightClickPressed = false;
+		MouseState.RightClickReleased = false;
+		MouseState.MiddleClickPressed = false;
+		MouseState.MiddleClickReleased = false;
 	}
 
 	public void UpdateHoveredWindow()

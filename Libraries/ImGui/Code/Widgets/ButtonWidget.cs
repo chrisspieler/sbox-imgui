@@ -24,19 +24,19 @@ internal class ButtonWidget : Widget
 		{
 			buttonColor = ImGui.GetColorU32( ImGuiCol.ImGuiColButtonHovered );
 		}
-		painter.DrawRect( GetScreenBounds(), buttonColor );
+		painter.DrawRect( ScreenRect, buttonColor );
 		painter.DrawText( Label, ScreenPosition + GetSize() * 0.5f );
 	}
 
-	public override void UpdateInput( MouseState mouse )
+	public override void UpdateInput()
 	{
-		base.UpdateInput( mouse );
+		base.UpdateInput();
 		IsReleased = false;
 
 		var lastDrawList = ImGuiSystem.Current.PreviousDrawList;
 		if ( lastDrawList.WidgetIds.TryGetValue( Id, out var lastWidget ) )
 		{
-			if ( lastWidget.IsActive && !mouse.LeftClickDown )
+			if ( lastWidget.IsActive && !MouseState.LeftClickDown )
 			{
 				IsReleased = true;
 			}

@@ -2,7 +2,24 @@
 
 public static partial class ImGui
 {
-	internal static MouseState Mouse => ImGuiSystem.Current.MouseState;
+	public static Vector2 GetMousePos() => MouseState.Position;
+	public static Vector2 GetMouseDragDelta( ImGuiMouseButton button, float lockThreshold = -1.0f )
+	{
+		if ( lockThreshold < 0f )
+		{
+			// TODO: Use io.MouseDraggingThreshold
+			lockThreshold = 1.0f;
+		}
+		var mouseDelta = button switch
+		{
+			ImGuiMouseButton.Left	=> MouseState.LeftClickDragDelta,
+			ImGuiMouseButton.Right	=> MouseState.RightClickDragDelta,
+			ImGuiMouseButton.Middle	=> MouseState.MiddleClickDragDelta,
+			_						=> Vector2.Zero
+		};
+		if ( mouseDelta.Length < lockThreshold )
+			return Vector2.Zero;
 
-	public static Vector2 GetMousePos() => Mouse.Position;
+		return mouseDelta;
+	}
 }

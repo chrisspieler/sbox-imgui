@@ -17,6 +17,6 @@ internal class TextWidget : Widget
 
 	public override void Paint( ImGuiPainter painter )
 	{
-		painter.DrawText( Text, new Rect( ScreenPosition, GetSize() ) );
+		painter.DrawText( Text, ScreenRect );
 	}
 }

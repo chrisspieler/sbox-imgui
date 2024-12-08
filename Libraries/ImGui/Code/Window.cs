@@ -14,7 +14,9 @@ internal class Window : IUniqueId
 		ScreenPosition = screenPos;
 		Pivot = pivot;
 		CustomScreenSize = size;
-		ImGuiSystem.Current.CursorScreenPosition = ScreenRect.Position;
+		ImGuiSystem.Current.CursorScreenPosition = ScreenPosition;
+		ImGuiSystem.Current.IdStack.Push( Id );
+		ImGuiSystem.Current.WindowStack.Push( this );
 		if ( !flags.HasFlag( ImGuiWindowFlags.NoTitleBar ) )
 		{
 			_ = new WindowTitleBar( this );
@@ -57,9 +59,10 @@ internal class Window : IUniqueId
 	{
 		get
 		{
-			return ScreenRect.IsInside( ImGuiSystem.Current.MouseState.Position );
+			return ScreenRect.IsInside( MouseState.Position );
 		}
 	}
+	public bool IsDragged { get; set; }
 
 	#region Transform
 	/// <summary>
@@ -83,6 +86,7 @@ internal class Window : IUniqueId
 	public Vector2 CustomScreenSize { get; set; }
 	public Rect ContentRect => new( ScreenRect.Position + Padding, ContentScreenSize );
 	public Vector2 ContentScreenSize { get; private set; }
+	public Vector2 CursorLocalPosition => ImGuiSystem.Current.CursorScreenPosition - ScreenRect.Position;
 
 	#endregion
 
@@ -113,6 +117,10 @@ internal class Window : IUniqueId
 		{
 			var pivotPx = ScreenSize * Pivot;
 			var position = ScreenPosition - pivotPx;
+			if ( IsDragged )
+			{
+				position += MouseState.LeftClickDragDelta;
+			}
 			return new Rect( position, ScreenSize );
 		}
 		set
@@ -130,9 +138,9 @@ internal class Window : IUniqueId
 	public Rect AddChild( Widget childWidget )
 	{
 		childWidget.Parent = this;
-		childWidget.ScreenPosition = ImGuiSystem.Current.CursorScreenPosition;
+		childWidget.LocalPosition = CursorLocalPosition;
 		Children.Add( childWidget );
-		var childRect = childWidget.GetScreenBounds();
+		var childRect = childWidget.ScreenRect;
 		var size = childRect.Size;
 		var spacing = Children.Count > 1 ? ImGui.GetStyle().ItemSpacing.y : 0;
 		ContentScreenSize = ContentScreenSize with
@@ -159,7 +167,7 @@ internal class Window : IUniqueId
 		}
 	}
 
-	public void UpdateInput( MouseState mouse )
+	public void UpdateInput()
 	{
 		
 	}

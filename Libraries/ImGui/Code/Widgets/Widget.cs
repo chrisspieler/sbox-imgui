@@ -14,7 +14,8 @@ internal abstract class Widget : IUniqueId
 	public bool IsActive => ImGuiSystem.Current.ClickedWidgetId == Id;
 	public bool IsHovered { get; set; }
 	public Window Parent { get; set; }
-	public Vector2 ScreenPosition { get; set; }
+	public Vector2 LocalPosition { get; set; }
+	public Vector2 ScreenPosition => Parent.ScreenRect.Position + LocalPosition;
 
 	#region History
 	// Because we don't know the layout of the screen until after everything has been drawn,
@@ -25,7 +26,7 @@ internal abstract class Widget : IUniqueId
 	#endregion
 
 	public abstract Vector2 GetSize();
-	public Rect GetScreenBounds() => new( ScreenPosition, GetSize() );
+	public Rect ScreenRect => new( ScreenPosition, GetSize() );
 
 	/// <summary>
 	/// Adds the widget to the current draw list and sets its parent window.
@@ -33,12 +34,12 @@ internal abstract class Widget : IUniqueId
 	public void Show()
 	{
 		ImGuiSystem.Current.AddWidget( Parent, this );
-		UpdateInput( ImGuiSystem.Current.MouseState );
+		UpdateInput();
 	}
 
 	public abstract void Paint( ImGuiPainter painter );
 
-	public virtual void UpdateInput( MouseState mouse )
+	public virtual void UpdateInput()
 	{
 		IsHovered = false;
 
@@ -48,13 +49,13 @@ internal abstract class Widget : IUniqueId
 		if ( !WasVisible )
 			return;
 
-		if ( !GetScreenBounds().IsInside( mouse.Position ) )
+		if ( !ScreenRect.IsInside( MouseState.Position ) )
 			return;
 
 		IsHovered = true;
-		if ( mouse.LeftClickPressed )
+		if ( MouseState.LeftClickPressed )
 		{
-			Click( mouse.Position );
+			Click( MouseState.Position );
 		}
 	}
 

@@ -1,15 +1,21 @@
 ﻿namespace Duccsoft.ImGui;
 
-internal struct MouseState
+internal static class MouseState
 {
-	public Vector2 Position { get; init; }
-	public bool LeftClickPressed { get; init; }
-	public bool LeftClickDown { get; init; }
-	public bool LeftClickReleased { get; init; }
-	public bool RightClickPressed { get; init; }
-	public bool RightClickDown { get; init; }
-	public bool RightClickReleased { get; init; }
-	public bool MiddleClickPressed { get; init; }
-	public bool MiddleClickDown { get; init; }
-	public bool MiddleClickReleased { get; init; }
+	public static Vector2 Position { get; set; }
+	public static bool LeftClickPressed { get; set; }
+	public static bool LeftClickDown { get; set; }
+	public static bool LeftClickReleased { get; set; }
+	public static Vector2 LeftClickPosition { get; set; }
+	public static Vector2 LeftClickDragDelta => Position - LeftClickPosition;
+	public static bool RightClickPressed { get; set; }
+	public static bool RightClickDown { get; set; }
+	public static bool RightClickReleased { get; set; }
+	public static Vector2 RightClickPosition { get; set; }
+	public static Vector2 RightClickDragDelta => Position - RightClickPosition;
+	public static bool MiddleClickPressed { get; set; }
+	public static bool MiddleClickDown { get; set; }
+	public static bool MiddleClickReleased { get; set; }
+	public static Vector2 MiddleClickPosition { get; set; }
+	public static Vector2 MiddleClickDragDelta => Position - MiddleClickPosition;
 }
