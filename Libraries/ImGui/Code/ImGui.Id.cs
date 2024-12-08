@@ -2,8 +2,6 @@
 
 public static partial class ImGui
 {
-	private static IdStack IdStack => ImGuiSystem.Current.IdStack;
-
 	public static void PushID( string id )
 	{
 		IdStack.Push( id );

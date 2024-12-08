@@ -4,22 +4,43 @@ namespace Duccsoft.ImGui;
 
 public static partial class ImGui
 {
-	private static Window CurrentWindow => ImGuiSystem.Current.CurrentWindow;
-
 	public static bool Begin( string name, Action onClose = null, ImGuiWindowFlags flags = default )
 	{
 		System.BeginWindow( name, onClose, flags );
 		return true;
 	}
 
-	public static bool IsWindowAppearing() => CurrentWindow.IsAppearing();
-	public static bool IsWindowFocused( ImGuiFocusedFlags flags ) => CurrentWindow.IsFocused( flags );
-	public static bool IsWindowHovered( ImGuiHoveredFlags flags ) => CurrentWindow.IsHovered( flags );
+	// TODO: Allow windows to be collapsed.
+	public static bool IsWindowCollapsed() => throw new NotImplementedException();
+	public static bool IsWindowAppearing() => CurrentWindow?.IsAppearing() == true;
+	public static bool IsWindowFocused( ImGuiFocusedFlags flags ) => CurrentWindow?.IsFocused( flags ) == true;
+	public static bool IsWindowHovered( ImGuiHoveredFlags flags ) => CurrentWindow?.IsHovered( flags ) == true;
 
 	public static void End()
 	{
 		ImGuiSystem.Current.EndWindow();
 	}
+
+	//TODO: Implement GetWindowDrawList, which would require a big refactor of widget painting.
+
+	public static Vector2 GetWindowPos()
+	{
+		if ( CurrentWindow is null )
+			return default;
+
+		return CurrentWindow.ScreenRect.Position;
+	}
+
+	public static Vector2 GetWindowSize()
+	{
+		if ( CurrentWindow is null )
+			return default;
+
+		return CurrentWindow.ScreenRect.Size;
+	}
+
+	public static float GetWindowWidth() => GetWindowSize().x;
+	public static float GetWindowHeight() => GetWindowSize().y;
 
 	public static void SetNextWindowPos( Vector2 position, ImGuiCond condition = default, Vector2 pivot = default )
 	{
@@ -29,13 +50,10 @@ public static partial class ImGui
 
 	public static void SetWindowPos( Vector2 position, ImGuiCond condition = default )
 	{
-		var window = ImGuiSystem.Current.CurrentWindow;
-		if ( window is not null )
-		{
-			var delta = position - window.ScreenPosition;
-			window.ScreenPosition = position;
-			ImGuiSystem.Current.CursorScreenPosition += delta;
-		}
+		if ( CurrentWindow is null )
+			return;
+
+		CurrentWindow.ScreenPosition = position;
 	}
 
 	public static void SetNextWindowSize( Vector2 size, ImGuiCond condition = default )

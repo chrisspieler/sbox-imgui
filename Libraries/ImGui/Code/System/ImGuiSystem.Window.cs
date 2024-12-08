@@ -119,11 +119,9 @@ internal partial class ImGuiSystem
 
 	public void AddWidget( Window window, Widget widget )
 	{
-		var widgetRect = window.AddChild( widget );
-		// TODO: Add SameLine support.
-		var cursorOffset = new Vector2( 0f, widgetRect.Size.y + Style.ItemSpacing.y );
-		CursorScreenPosition = widgetRect.Position + cursorOffset;
+		window.AddChild( widget );
 		CurrentDrawList.AddWidget( widget );
+		ImGui.NewLine();
 	}
 
 	public void EndWindow()

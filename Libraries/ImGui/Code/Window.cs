@@ -14,14 +14,14 @@ internal class Window : IUniqueId
 		ScreenPosition = screenPos;
 		Pivot = pivot;
 		CustomScreenSize = size;
-		ImGuiSystem.Current.CursorScreenPosition = ScreenPosition;
 		ImGuiSystem.Current.IdStack.Push( Id );
 		ImGuiSystem.Current.WindowStack.Push( this );
 		if ( !flags.HasFlag( ImGuiWindowFlags.NoTitleBar ) )
 		{
-			_ = new WindowTitleBar( this );
+			var titleBar = new WindowTitleBar( this );
+			CursorPosition += new Vector2( 0f, titleBar.GetSize().y );
 		}
-		ImGuiSystem.Current.CursorScreenPosition += ImGui.GetStyle().WindowPadding;
+		CursorPosition += ImGui.GetStyle().WindowPadding;
 	}
 
 	public static Window Get( int id )
@@ -86,8 +86,7 @@ internal class Window : IUniqueId
 	public Vector2 CustomScreenSize { get; set; }
 	public Rect ContentRect => new( ScreenRect.Position + Padding, ContentScreenSize );
 	public Vector2 ContentScreenSize { get; private set; }
-	public Vector2 CursorLocalPosition => ImGuiSystem.Current.CursorScreenPosition - ScreenRect.Position;
-
+	public Vector2 CursorPosition { get; set; }
 	#endregion
 
 	#region Layout
@@ -135,10 +134,10 @@ internal class Window : IUniqueId
 	public static Color32 BackgroundColor => ImGui.GetColorU32( ImGuiCol.WindowBg );
 	public static Color32 BorderColor => ImGui.GetColorU32( ImGuiCol.Border );
 
-	public Rect AddChild( Widget childWidget )
+	public void AddChild( Widget childWidget )
 	{
 		childWidget.Parent = this;
-		childWidget.LocalPosition = CursorLocalPosition;
+		childWidget.LocalPosition = CursorPosition;
 		Children.Add( childWidget );
 		var childRect = childWidget.ScreenRect;
 		var size = childRect.Size;
@@ -148,7 +147,6 @@ internal class Window : IUniqueId
 			x = MathF.Max( size.x, ContentScreenSize.x ),
 			y = ContentScreenSize.y + size.y + spacing,
 		};
-		return childRect;
 	}
 
 	public void Paint( ImGuiPainter painter )

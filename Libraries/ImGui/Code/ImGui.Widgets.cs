@@ -4,8 +4,6 @@ namespace Duccsoft.ImGui;
 
 public static partial class ImGui
 {
-	private static Widget CurrentWidget => CurrentWindow?.CurrentWidget;
-
 	public static bool IsItemClicked( ImGuiMouseButton button = ImGuiMouseButton.Left )
 	{
 		return CurrentWidget.IsClicked( button );
