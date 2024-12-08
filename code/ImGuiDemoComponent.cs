@@ -9,6 +9,12 @@ public class ImGuiDemo : Component
 	private bool _shouldDrawWindow2 = true;
 	private float _myFloatValue = 24f;
 	private bool _shouldFocusFloatingWindow = false;
+	private Texture _randomTex;
+
+	protected override void OnStart()
+	{
+		_randomTex = GenerateImage( new Vector2( 64 ) );
+	}
 
 	protected override void OnUpdate()
 	{
@@ -17,6 +23,23 @@ public class ImGuiDemo : Component
 		DrawWindow2();
 		DrawWindowNoTitle();
 		DrawMovingWindow();
+	}
+
+	private Texture GenerateImage( Vector2 size )
+	{
+		var x = (int)size.x;
+		var y = (int)size.y;
+		var data = new Color32[x * y];
+		for ( int iY = 0; iY < y; iY++ )
+		{
+			for ( int iX = 0; iX < x; iX++ )
+			{
+				data[iX * iY + iX] = Color.Random;
+			}
+		}
+		return Texture.Create( x, y )
+			.WithData<Color32>( data )
+			.Finish();
 	}
 
 	private void DrawWindow1()
@@ -33,6 +56,7 @@ public class ImGuiDemo : Component
 			_shouldFocusFloatingWindow = true;
 		}
 		ImGui.SliderFloat( "My Float", () => _myFloatValue, v => _myFloatValue = v, -128f, 256f );
+		ImGui.Image( _randomTex, new Vector2( 128 ) * ImGuiStyle.UIScale, Color.White, ImGui.GetColorU32( ImGuiCol.Border ) );
 		ImGui.End();
 	}
 

@@ -28,4 +28,15 @@ public static partial class ImGui
 		_ = new SliderFloat( CurrentWindow, label, getter, setter, min, max, format );
 		return true;
 	}
+
+
+	public static void Image( Texture texture, Vector2 size, Color tintColor, Color borderColor )
+	{
+		Image( texture, size, Vector2.Zero, Vector2.One, tintColor, borderColor );
+	}
+
+	public static void Image( Texture texture, Vector2 size, Vector2 uv0, Vector2 uv1, Color tintColor, Color borderColor )
+	{
+		_ = new ImageWidget( CurrentWindow, texture, size, uv0, uv1, tintColor, borderColor );
+	}
 }
