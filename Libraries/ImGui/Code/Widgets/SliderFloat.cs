@@ -36,6 +36,7 @@ internal class SliderFloat : Widget
 
 	public override void Paint( ImGuiPainter painter )
 	{
+		// Paint background
 		var bgRect = new Rect( ScreenPosition, GetSize() );
 		var bgColor = ImGui.GetColorU32( ImGuiCol.FrameBg );
 		if ( IsActive )
@@ -48,8 +49,18 @@ internal class SliderFloat : Widget
 		}
 		painter.DrawRect( bgRect, bgColor );
 
+		if ( IsActive )
+		{
+			var xPosMin = bgRect.Position.x;
+			var xPosMax = bgRect.Position.x + bgRect.Size.x;
+			var dragProgress = MathX.LerpInverse( ImGui.GetMousePos().x, xPosMin, xPosMax );
+			var targetValue = MathX.Lerp( MinValue, MaxValue, dragProgress );
+			ValueSetter( targetValue );
+		}
+
+		// Paint grab
 		var grabSize = new Vector2( Style.GrabMinSize, ImGui.GetFrameHeight() ) ;
-		var xGrabPos = Value.Remap( MinValue, MaxValue, 0f, bgRect.Size.x );
+		var xGrabPos = Value.Remap( MinValue, MaxValue, 0f, bgRect.Size.x - grabSize.x );
 		var grabPos = ScreenPosition + new Vector2( xGrabPos, Style.FramePadding.y * 0.5f );
 		var grabColor = ImGui.GetColorU32( ImGuiCol.SliderGrab );
 		if ( IsActive )
@@ -58,10 +69,11 @@ internal class SliderFloat : Widget
 		}
 		painter.DrawRect( new Rect( grabPos, grabSize ), grabColor );
 
+		// Paint value
 		var text = Value.ToString( Format );
 		var textSize = ImGui.CalcTextSize( text );
 		var xOffsetText = bgRect.Size.x * 0.5f;
 		var textPos = ScreenPosition + new Vector2( xOffsetText, Style.FramePadding.y );
-		painter.DrawText( text, new Rect( textPos, textSize ) );
+		painter.DrawText( text, textPos, TextFlag.CenterTop );
 	}
 }

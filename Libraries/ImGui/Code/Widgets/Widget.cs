@@ -33,6 +33,7 @@ internal abstract class Widget : IUniqueId
 	public void Show()
 	{
 		ImGuiSystem.Current.AddWidget( Parent, this );
+		UpdateInput( ImGuiSystem.Current.MouseState );
 	}
 
 	public abstract void Paint( ImGuiPainter painter );

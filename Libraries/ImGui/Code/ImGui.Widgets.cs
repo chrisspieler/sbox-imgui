@@ -19,9 +19,8 @@ public static partial class ImGui
 
 	public static bool Button( string label, Vector2 size = default )
 	{
-		var widget = new ButtonWidget( CurrentWindow, label );
-		widget.UpdateInput( Mouse );
-		return widget.IsReleased;
+		var button = new ButtonWidget( CurrentWindow, label );
+		return button.IsReleased;
 	}
 
 	public static bool SliderFloat( string label, Func<float> getter, Action<float> setter, float min, float max, string format = null, ImGuiSliderFlags flags = default )
