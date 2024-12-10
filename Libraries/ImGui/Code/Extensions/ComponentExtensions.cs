@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Sandbox.Diagnostics;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Duccsoft.ImGui;
 
 public static class ComponentExtensions
 {
-	public static void ImGuiInspector( this Component component, bool newWindow = true )
+	public static void ImGuiInspector( this Component component )
 	{
 		void PrintProperties( List<PropertyDescription> properties )
 		{
@@ -20,13 +20,11 @@ public static class ComponentExtensions
 		if ( !component.IsValid() )
 			return;
 
-		// TODO: Retrieve all TypeDescriptions and PropertyDescriptions from ReflectionCache
-		var typeDesc = TypeLibrary.GetType( component.GetType() );
+		var sw = FastTimer.StartNew();
+		var typeDesc = ImGuiSystem.Current.GetTypeDescription( component.GetType() );
 		var name = typeDesc.ClassName;
-		var properties = typeDesc.Properties
-			.Where( p => p.HasAttribute<PropertyAttribute>() )
-			.ToList();
-		if ( !newWindow )
+		var properties = ImGuiSystem.Current.GetProperties( component.GetType() );
+		if ( ImGui.CurrentWindow is not null )
 		{
 			PrintProperties( properties );
 		}
@@ -58,18 +56,22 @@ public static class ComponentExtensions
 
 	private static void ImGuiFloatProperty( Component component, PropertyDescription prop )
 	{
-		ImGui.Text( prop.Name ); ImGui.SameLine();
-		Func<float> getter = () => (float)prop.GetValue( component );
-		Action<float> setter = v => prop.SetValue( component, v );
-		// TODO: Without RangeAttribute, use DragFloat instead of SliderFloat.
-		var min = -100_000f;
-		var max = 100_000f;
 		var range = prop.GetCustomAttribute<RangeAttribute>();
 		if ( range is not null )
 		{
-			min = range.Min;
-			max = range.Max;
+			ImGuiSliderFloatProperty( component, prop, range.Min, range.Max );
 		}
+		else
+		{
+			// TODO: Draw DragFloat
+		}
+	}
+
+	private static void ImGuiSliderFloatProperty( Component component, PropertyDescription prop, float min, float max )
+	{
+		ImGui.Text( prop.Name ); ImGui.SameLine();
+		Func<float> getter = () => (float)prop.GetValue( component );
+		Action<float> setter = v => prop.SetValue( component, v );
 		ImGui.SliderFloat( prop.Name, getter, setter, min, max );
 	}
 }

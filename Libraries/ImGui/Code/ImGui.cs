@@ -6,6 +6,6 @@ public static partial class ImGui
 {
 	private static ImGuiSystem System => ImGuiSystem.Current;
 	private static IdStack IdStack => ImGuiSystem.Current.IdStack;
-	private static Widget CurrentWidget => CurrentWindow?.CurrentWidget;
-	private static Window CurrentWindow => ImGuiSystem.Current.CurrentWindow;
+	internal static Widget CurrentWidget => CurrentWindow?.CurrentWidget;
+	internal static Window CurrentWindow => ImGuiSystem.Current.CurrentWindow;
 }
