@@ -141,12 +141,12 @@ internal class Window : IUniqueId
 		childWidget.Parent = this;
 		childWidget.Position = CursorPosition;
 		Children.Add( childWidget );
-		var childRect = childWidget.ScreenRect;
-		var size = childRect.Size;
+		var size = childWidget.Size;
 		var spacing = Children.Count > 1 ? ImGui.GetStyle().ItemSpacing.y : 0;
+		var xMax = childWidget.Position.x + size.x;
 		ContentScreenSize = ContentScreenSize with
 		{
-			x = MathF.Max( size.x, ContentScreenSize.x ),
+			x = MathF.Max( xMax, ContentScreenSize.x ),
 			y = ContentScreenSize.y + size.y + spacing,
 		};
 	}
