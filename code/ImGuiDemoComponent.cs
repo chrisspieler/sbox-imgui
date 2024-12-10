@@ -5,6 +5,8 @@ namespace Sandbox;
 
 public class ImGuiDemo : Component
 {
+	[Property] public ExampleComponent ExampleComponent { get; set; }
+
 	private int _clickCounter;
 	private bool _shouldDrawWindow2 = true;
 	private float _myFloatValue = 24f;
@@ -23,6 +25,7 @@ public class ImGuiDemo : Component
 		DrawWindow2();
 		DrawWindowNoTitle();
 		DrawMovingWindow();
+		ExampleComponent.ImGuiInspector();
 	}
 
 	private Texture GenerateImage( Vector2 size )

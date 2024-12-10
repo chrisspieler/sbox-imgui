@@ -9,7 +9,19 @@
       "Components": [
         {
           "__type": "Sandbox.ImGuiDemo",
-          "__guid": "d3b2cfe7-8251-4f9f-848d-47ec46595224"
+          "__guid": "d3b2cfe7-8251-4f9f-848d-47ec46595224",
+          "ExampleComponent": {
+            "_type": "component",
+            "component_id": "77f8aaab-ce3c-4d38-9e58-2bed690c500a",
+            "go": "0749f833-75fc-43bb-84a6-8b3e2da184bc",
+            "component_type": "ExampleComponent"
+          }
+        },
+        {
+          "__type": "Sandbox.ExampleComponent",
+          "__guid": "77f8aaab-ce3c-4d38-9e58-2bed690c500a",
+          "FloatProperty1": 20,
+          "FloatProperty2": 400
         }
       ]
     },
