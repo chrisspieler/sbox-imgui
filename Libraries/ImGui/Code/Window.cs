@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Duccsoft.ImGui;
 
@@ -144,10 +143,11 @@ internal class Window : IUniqueId
 		var size = childWidget.Size;
 		var spacing = Children.Count > 1 ? ImGui.GetStyle().ItemSpacing.y : 0;
 		var xMax = childWidget.Position.x + size.x;
+		var yMax = CursorPosition.y + size.y + spacing;
 		ContentScreenSize = ContentScreenSize with
 		{
 			x = MathF.Max( xMax, ContentScreenSize.x ),
-			y = ContentScreenSize.y + size.y + spacing,
+			y = MathF.Max( yMax, ContentScreenSize.y ),
 		};
 	}
 
