@@ -36,7 +36,6 @@ internal partial class ImGuiSystem
 
 		if ( sceneCamera.IsValid() )
 		{
-			Log.Info( $"Adding ImGui render hook" );
 			TargetCamera = sceneCamera;
 			_uiRenderHook?.Dispose();
 			_uiRenderHook = null;
