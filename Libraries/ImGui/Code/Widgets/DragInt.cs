@@ -40,10 +40,9 @@ internal class DragInt : Widget
 	{
 		base.UpdateInput();
 
-
 		if ( IsActive )
 		{
-			var delta = MouseState.LeftClickDragTotalDelta.x * Speed;
+			var delta = MouseState.LeftClickDragFrameDelta.x * Speed;
 			Value = Value += (int)delta;
 		}
 	}

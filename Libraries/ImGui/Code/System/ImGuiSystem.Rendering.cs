@@ -1,5 +1,4 @@
-﻿using Sandbox.Rendering;
-using System;
+﻿using System;
 
 namespace Duccsoft.ImGui;
 

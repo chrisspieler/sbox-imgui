@@ -84,6 +84,18 @@ internal partial class ImGuiSystem
 	private void UpdateInputState()
 	{
 		MouseState.Position = Mouse.Position;
+		switch ( MouseButton )
+		{
+			case ImGuiMouseButton.Right:
+				MouseState.RightClickDragFrameDelta = Mouse.Delta;
+				break;
+			case ImGuiMouseButton.Middle:
+				MouseState.MiddleClickDragFrameDelta = Mouse.Delta;
+				break;
+			default:
+				MouseState.LeftClickDragFrameDelta = Mouse.Delta;
+				break;
+		}
 	}
 
 	private void ClearInputState()
@@ -94,10 +106,13 @@ internal partial class ImGuiSystem
 		}
 		MouseState.LeftClickPressed = false;
 		MouseState.LeftClickReleased = false;
+		MouseState.LeftClickDragFrameDelta = 0f;
 		MouseState.RightClickPressed = false;
 		MouseState.RightClickReleased = false;
+		MouseState.RightClickDragFrameDelta = 0f;
 		MouseState.MiddleClickPressed = false;
 		MouseState.MiddleClickReleased = false;
+		MouseState.MiddleClickDragFrameDelta = 0f;
 	}
 
 	public void UpdateHoveredWindow()
