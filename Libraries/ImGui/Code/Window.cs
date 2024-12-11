@@ -121,7 +121,7 @@ internal class Window : IUniqueId
 			var position = ScreenPosition - pivotPx;
 			if ( IsDragged )
 			{
-				position += MouseState.LeftClickDragDelta;
+				position += MouseState.LeftClickDragTotalDelta;
 			}
 			return new Rect( position, ScreenSize );
 		}

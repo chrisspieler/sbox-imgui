@@ -12,7 +12,6 @@ public class ImGuiDemo : Component
 	private bool _shouldDrawWindow2 = true;
 	private float _myFloatValue = 24f;
 	private bool _shouldFocusFloatingWindow = false;
-	private Texture _randomTex;
 
 	protected override void OnUpdate()
 	{

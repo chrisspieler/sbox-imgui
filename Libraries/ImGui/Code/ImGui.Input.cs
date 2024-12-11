@@ -12,9 +12,9 @@ public static partial class ImGui
 		}
 		var mouseDelta = button switch
 		{
-			ImGuiMouseButton.Left	=> MouseState.LeftClickDragDelta,
-			ImGuiMouseButton.Right	=> MouseState.RightClickDragDelta,
-			ImGuiMouseButton.Middle	=> MouseState.MiddleClickDragDelta,
+			ImGuiMouseButton.Left	=> MouseState.LeftClickDragTotalDelta,
+			ImGuiMouseButton.Right	=> MouseState.RightClickDragTotalDelta,
+			ImGuiMouseButton.Middle	=> MouseState.MiddleClickDragTotalDelta,
 			_						=> Vector2.Zero
 		};
 		if ( mouseDelta.Length < lockThreshold )

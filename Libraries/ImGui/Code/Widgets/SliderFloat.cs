@@ -1,7 +1,5 @@
 ﻿using Duccsoft.ImGui.Rendering;
-using Sandbox;
 using System;
-using System.Reflection;
 
 namespace Duccsoft.ImGui;
 
@@ -76,7 +74,6 @@ internal class SliderFloat : Widget
 
 		// Paint value
 		var text = Value.ToString( Format );
-		var textSize = ImGui.CalcTextSize( text );
 		var xOffsetText = bgRect.Size.x * 0.5f;
 		var textPos = ScreenPosition + new Vector2( xOffsetText, Style.FramePadding.y );
 		drawList.AddText( textPos, ImGui.GetColorU32( ImGuiCol.Text ), text );

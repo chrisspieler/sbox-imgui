@@ -35,6 +35,7 @@ internal partial class ImGuiSystem
 
 		if ( sceneCamera.IsValid() )
 		{
+			Log.Info( $"Adding ImGui render hook" );
 			TargetCamera = sceneCamera;
 			_uiRenderHook?.Dispose();
 			_uiRenderHook = null;
@@ -64,9 +65,14 @@ internal partial class ImGuiSystem
 
 	private void Render( SceneCamera camera )
 	{
+		if ( !Game.IsPlaying )
+			return;
+
+		int commandCount = 0;
 		Window focusedWindow = null;
 		foreach ( var window in PreviousBoundsList.Windows )
 		{
+			commandCount += window.DrawList.Count;
 			if ( window.IsFocused )
 			{
 				focusedWindow = window;

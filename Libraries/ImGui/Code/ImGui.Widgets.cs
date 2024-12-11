@@ -21,6 +21,13 @@ public static partial class ImGui
 		return button.IsReleased;
 	}
 
+	public static bool DragInt( string label, Func<int> getter, Action<int> setter, float speed = 1.0f, int min = 0, int max = 0, string format = null, ImGuiSliderFlags flags = 0 )
+	{
+		_ = new DragInt( CurrentWindow, label, getter, setter, speed, min, max, format, flags );
+		// TODO: Is returning true correct?
+		return true;
+	}
+
 	public static bool SliderFloat( string label, Func<float> getter, Action<float> setter, float min, float max, string format = null, ImGuiSliderFlags flags = default )
 	{
 		_ = new SliderFloat( CurrentWindow, label, getter, setter, min, max, format );

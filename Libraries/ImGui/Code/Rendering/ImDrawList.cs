@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Duccsoft.ImGui.Rendering;
 
 public class ImDrawList
 {
 	protected Action Actions { get; set; }
-	public void Clear() => Actions = null;
-	public int Count => Actions.GetInvocationList().Length;
+	protected RenderAttributes Attributes { get; set; } = new();
+	public int Count => Actions?.GetInvocationList()?.Length ?? 0;
+
+	public void Clear()
+	{
+		Actions = null;
+		Attributes = new();
+	}
 
 	public void Render()
 	{
@@ -16,6 +23,7 @@ public class ImDrawList
 			return;
 		}
 		Actions?.Invoke();
+		Clear();
 	}
 
 	#region Rect
@@ -73,7 +81,7 @@ public class ImDrawList
 	private void DrawText( TextRendering.Scope scope, Vector2 point, TextFlag flags )
 	{
 		Texture textTexture = TextRendering.GetOrCreateTexture( in scope, default, flags );
-		if ( textTexture is null || !textTexture.IsLoaded )
+		if ( textTexture is null )
 			return;
 
 		Graphics.Attributes.Clear();
