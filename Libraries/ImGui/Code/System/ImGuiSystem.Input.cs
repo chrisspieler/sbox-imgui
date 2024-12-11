@@ -102,7 +102,7 @@ internal partial class ImGuiSystem
 
 	public void UpdateHoveredWindow()
 	{
-		var windows = CurrentDrawList.Windows.ToArray();
+		var windows = CurrentBoundsList.Windows.ToArray();
 		var lastMouseOver = -1;
 		for ( int i = 0; i < windows.Length; i++ )
 		{

@@ -15,13 +15,20 @@
             "component_id": "77f8aaab-ce3c-4d38-9e58-2bed690c500a",
             "go": "0749f833-75fc-43bb-84a6-8b3e2da184bc",
             "component_type": "ExampleComponent"
-          }
+          },
+          "ExampleTexture": "textures/dev/blue_noise_256.vtex"
         },
         {
           "__type": "Sandbox.ExampleComponent",
           "__guid": "77f8aaab-ce3c-4d38-9e58-2bed690c500a",
-          "FloatProperty1": 20,
-          "FloatProperty2": 400
+          "ColorEdit4": "1,0.6,0,1",
+          "Combo": "Duccs",
+          "DragFloat": 20,
+          "DragFloat2": "-20,50",
+          "DragFloat3": "10,-30,50",
+          "DragInt": 64,
+          "SliderFloat": 400,
+          "SliderInt": 8
         }
       ]
     },
@@ -29,6 +36,8 @@
       "__guid": "efda05f7-7b7e-4b63-8dc1-b10205dd7fb0",
       "Flags": 0,
       "Name": "Camera",
+      "Position": "0,0,72",
+      "Rotation": "0,0.08715574,0,0.9961947",
       "Tags": "maincamera",
       "Enabled": true,
       "Components": [
@@ -48,6 +57,46 @@
           "Viewport": "0,0,1,1",
           "ZFar": 10000,
           "ZNear": 10
+        }
+      ]
+    },
+    {
+      "__guid": "4a899e2b-0fc4-4fdd-8b15-417377b7194c",
+      "Flags": 0,
+      "Name": "2D Skybox",
+      "Tags": "skybox",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.SkyBox2D",
+          "__guid": "31689298-6467-4d14-8111-2afc26984d2b",
+          "SkyIndirectLighting": true,
+          "SkyMaterial": "materials/skybox/skybox_day_01.vmat",
+          "Tint": "1,1,1,1"
+        }
+      ]
+    },
+    {
+      "__guid": "58663378-4beb-440f-b519-18e065c74b4e",
+      "Flags": 0,
+      "Name": "Plane",
+      "Scale": "10,10,1",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "b31b20ac-75b9-4290-80af-9bf4ec677b46",
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "Model": "models/dev/plane.vmdl",
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
         }
       ]
     }

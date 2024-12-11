@@ -1,4 +1,6 @@
-﻿using static Sandbox.VertexLayout;
+﻿using Duccsoft.ImGui.Rendering;
+using System.Reflection;
+using static Sandbox.VertexLayout;
 
 namespace Duccsoft.ImGui;
 
@@ -35,7 +37,7 @@ internal class WindowTitleBar : Widget
 		}
 	}
 
-	public override void Paint( ImGuiPainter painter )
+	public override void Draw( ImDrawList drawList )
 	{
 		var titleBarRect = GetTitleBarRect();
 
@@ -43,14 +45,13 @@ internal class WindowTitleBar : Widget
 		var titleBarColor = Parent.IsFocused
 			? TitleActiveColor
 			: TitleInactiveColor;
-		painter.DrawRect( titleBarRect, titleBarColor );
+		drawList.AddRectFilled( titleBarRect.Position, titleBarRect.Position + titleBarRect.Size, titleBarColor );
 
 		// Paint title
 		var textPanelSize = GetTitleTextSize();
 		var xTextOffset = titleBarRect.Size.x * 0.5f - textPanelSize.x * 0.5f;
 		var yTextOffset = textPanelSize.y * 0.25f;
 		var textPanelPos = titleBarRect.Position + new Vector2( xTextOffset, yTextOffset );
-		var textRect = new Rect( textPanelPos, textPanelSize );
-		painter.DrawText( Parent.Name, textRect );
+		drawList.AddText( textPanelPos, ImGui.GetColorU32( ImGuiCol.Text ), Parent.Name );
 	}
 }

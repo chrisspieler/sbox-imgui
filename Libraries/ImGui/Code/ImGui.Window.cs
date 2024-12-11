@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Duccsoft.ImGui.Rendering;
+using System;
 
 namespace Duccsoft.ImGui;
 
@@ -21,7 +22,13 @@ public static partial class ImGui
 		ImGuiSystem.Current.EndWindow();
 	}
 
-	//TODO: Implement GetWindowDrawList, which would require a big refactor of widget painting.
+	public static ImDrawList GetWindowDrawList()
+	{
+		if ( CurrentWindow is null )
+			return default;
+
+		return CurrentWindow.DrawList;
+	}
 
 	public static Vector2 GetWindowPos()
 	{

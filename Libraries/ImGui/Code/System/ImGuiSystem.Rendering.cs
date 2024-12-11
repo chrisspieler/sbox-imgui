@@ -1,39 +1,20 @@
-﻿using Sandbox.Rendering;
+﻿using System;
 
 namespace Duccsoft.ImGui;
 
 internal partial class ImGuiSystem
 {
-	private void InitRendering()
-	{
-		CommandList = new CommandList( "ImGui" )
-		{
-			Flags = CommandList.Flag.Hud
-		};
-	}
-
 	public bool UseSceneCamera { get; } = true;
-	public ImGuiPainter Painter => new( CommandList );
 	private CameraComponent TargetCamera { get; set; }
 
-	public CommandList CommandList { get; private set; }
-	public Sandbox.Rendering.Stage RenderingStage { get; set; } = Sandbox.Rendering.Stage.AfterPostProcess;
-
-	private void ClearCommandList()
-	{
-		if ( !Game.IsPlaying )
-			return;
-
-		UpdateTargetCamera();
-		// Clear the command list, in case it hasn't been cleared by whatever is rendering it.
-		CommandList.Reset();
-	}
+	private IDisposable _uiRenderHook;
 
 	private void UpdateTargetCamera()
 	{
 		if ( !UseSceneCamera )
 		{
-			TargetCamera?.RemoveCommandList( CommandList );
+			_uiRenderHook?.Dispose();
+			_uiRenderHook = null;
 			TargetCamera = null;
 			return;
 		}
@@ -48,13 +29,16 @@ internal partial class ImGuiSystem
 		// If the old camera is still valid, but we're switching away from it.
 		if ( isTargetValid )
 		{
-			TargetCamera.RemoveCommandList( CommandList );
+			_uiRenderHook?.Dispose();
+			_uiRenderHook = null;
 		}
 
 		if ( sceneCamera.IsValid() )
 		{
 			TargetCamera = sceneCamera;
-			TargetCamera.AddCommandList( CommandList, RenderingStage, 10_000 );
+			_uiRenderHook?.Dispose();
+			_uiRenderHook = null;
+			_uiRenderHook = TargetCamera.AddHookAfterTransparent( "ImDrawList Rendering", 10_000, Render );
 		}
 	}
 
@@ -64,17 +48,33 @@ internal partial class ImGuiSystem
 			return;
 
 		Window focusedWindow = null;
-		foreach ( var window in CurrentDrawList.Windows )
+		foreach ( var window in CurrentBoundsList.Windows )
 		{
 			if ( window.IsFocused )
 			{
 				focusedWindow = window;
 				continue;
 			}
-			window.Paint( Painter );
+			window.Draw();
 		}
-		// Paint the focused window last.
-		focusedWindow?.Paint( Painter );
+		// Draw the focused window last.
+		focusedWindow?.Draw();
 		ClearWindows();
+	}
+
+	private void Render( SceneCamera camera )
+	{
+		Window focusedWindow = null;
+		foreach ( var window in PreviousBoundsList.Windows )
+		{
+			if ( window.IsFocused )
+			{
+				focusedWindow = window;
+				continue;
+			}
+			window.DrawList.Render();
+		}
+		// Render the focused window last.
+		focusedWindow?.DrawList?.Render();
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Duccsoft.ImGui.Rendering;
+using System;
 using System.Collections.Generic;
 
 namespace Duccsoft.ImGui;
@@ -26,7 +27,7 @@ internal class Window : IUniqueId
 
 	public static Window Get( int id )
 	{
-		var drawList = ImGuiSystem.Current.CurrentDrawList;
+		var drawList = ImGuiSystem.Current.CurrentBoundsList;
 		drawList.WindowIds.TryGetValue( id, out var window );
 		return window;
 	}
@@ -34,6 +35,7 @@ internal class Window : IUniqueId
 	public int Id { get; init; }
 	public string Name { get; init; }
 	public Window Previous => ImGuiSystem.Current.GetPreviousWindow( Id );
+	public ImDrawList DrawList { get; set; } = new();
 	public ImGuiWindowFlags Flags { get; init; }
 
 	public Action OnClose { get; set; }
@@ -151,19 +153,13 @@ internal class Window : IUniqueId
 		};
 	}
 
-	public void Paint( ImGuiPainter painter )
+	public void Draw()
 	{
-		// Paint background
-		painter.DrawRect( ScreenRect, BackgroundColor, default, Vector4.One, BorderColor );
-
-		PaintChildren( painter );
-	}
-
-	private void PaintChildren( ImGuiPainter painter )
-	{
-		foreach( var child in Children )
+		DrawList.AddRect( ScreenRect.TopLeft, ScreenRect.BottomRight, BorderColor, rounding: 0, flags: ImDrawFlags.None, thickness: 1 );
+		DrawList.AddRectFilled( ScreenRect.TopLeft, ScreenRect.BottomRight, BackgroundColor );
+		foreach ( var child in Children )
 		{
-			child.Paint( painter );
+			child.Draw( DrawList );
 		}
 	}
 

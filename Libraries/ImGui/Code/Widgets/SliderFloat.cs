@@ -1,5 +1,7 @@
-﻿using Sandbox;
+﻿using Duccsoft.ImGui.Rendering;
+using Sandbox;
 using System;
+using System.Reflection;
 
 namespace Duccsoft.ImGui;
 
@@ -46,7 +48,7 @@ internal class SliderFloat : Widget
 		}
 	}
 
-	public override void Paint( ImGuiPainter painter )
+	public override void Draw( ImDrawList drawList )
 	{
 		// Paint background
 		var bgRect = new Rect( ScreenPosition, Size );
@@ -59,10 +61,10 @@ internal class SliderFloat : Widget
 		{
 			bgColor = ImGui.GetColorU32( ImGuiCol.FrameBgHovered );
 		}
-		painter.DrawRect( bgRect, bgColor );
+		drawList.AddRectFilled( ScreenPosition, ScreenPosition + Size, bgColor );
 
 		// Paint grab
-		var grabSize = new Vector2( Style.GrabMinSize, ImGui.GetFrameHeight() ) ;
+		var grabSize = new Vector2( Style.GrabMinSize, ImGui.GetFrameHeight() );
 		var xGrabPos = Value.Remap( MinValue, MaxValue, 0f, bgRect.Size.x - grabSize.x );
 		var grabPos = ScreenPosition + new Vector2( xGrabPos, Style.FramePadding.y * 0.5f );
 		var grabColor = ImGui.GetColorU32( ImGuiCol.SliderGrab );
@@ -70,13 +72,13 @@ internal class SliderFloat : Widget
 		{
 			grabColor = ImGui.GetColorU32( ImGuiCol.SliderGrabActive );
 		}
-		painter.DrawRect( new Rect( grabPos, grabSize ), grabColor );
+		drawList.AddRectFilled( grabPos, grabPos + grabSize, grabColor );
 
 		// Paint value
 		var text = Value.ToString( Format );
 		var textSize = ImGui.CalcTextSize( text );
 		var xOffsetText = bgRect.Size.x * 0.5f;
 		var textPos = ScreenPosition + new Vector2( xOffsetText, Style.FramePadding.y );
-		painter.DrawText( text, textPos, TextFlag.CenterTop );
+		drawList.AddText( textPos, ImGui.GetColorU32( ImGuiCol.Text ), text );
 	}
 }

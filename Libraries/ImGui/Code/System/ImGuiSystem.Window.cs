@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Duccsoft.ImGui;
 
 internal partial class ImGuiSystem
 {
-	public DrawList CurrentDrawList { get; private set; } = new();
-	// Keep the previous frame's draw list so that we can check whether a widget
+	public BoundsList CurrentBoundsList { get; private set; } = new();
+	// Keep the previous frame's bounds list so that we can check whether a widget
 	// drawn before a window was occluded by that window on the previous frame.
-	public DrawList PreviousDrawList { get; set; } = new();
+	public BoundsList PreviousBoundsList { get; set; } = new();
 	public Stack<Window> WindowStack { get; private init; } = new();
 	public IdStack IdStack { get; private init; } = new();
 	public Dictionary<int, Vector2> CustomWindowPositions { get; private set; } = new();
@@ -24,7 +23,7 @@ internal partial class ImGuiSystem
 			return WindowStack.Peek();
 		}
 	}
-	public int CurrentWindowCount => CurrentDrawList.WindowIds.Values.Count;
+	public int CurrentWindowCount => CurrentBoundsList.WindowIds.Values.Count;
 
 	public Vector2 NextWindowPosition { get; set; }
 	public Vector2 NextWindowPivot { get; set; }
@@ -43,18 +42,18 @@ internal partial class ImGuiSystem
 	}
 
 	public int ClickedWidgetId { get; set; }
-	public int CurrentWidgetCount => CurrentDrawList.WidgetIds.Values.Count;
+	public int CurrentWidgetCount => CurrentBoundsList.WidgetIds.Values.Count;
 	public Widget CurrentWidget => CurrentWindow?.CurrentWidget;
 
 	public Window GetPreviousWindow( int id )
 	{
-		PreviousDrawList.WindowIds.TryGetValue( id, out var previous );
+		PreviousBoundsList.WindowIds.TryGetValue( id, out var previous );
 		return previous;
 	}
 
 	public Widget GetPreviousWidget( int id )
 	{
-		PreviousDrawList.WidgetIds.TryGetValue( id, out var previous );
+		PreviousBoundsList.WidgetIds.TryGetValue( id, out var previous );
 		return previous;
 	}
 
@@ -86,8 +85,8 @@ internal partial class ImGuiSystem
 
 	public void ClearWindows()
 	{
-		PreviousDrawList = CurrentDrawList;
-		CurrentDrawList = new();
+		PreviousBoundsList = CurrentBoundsList;
+		CurrentBoundsList = new();
 		WindowStack.Clear();
 	}
 
@@ -120,7 +119,7 @@ internal partial class ImGuiSystem
 	public void AddWidget( Window window, Widget widget )
 	{
 		window.AddChild( widget );
-		CurrentDrawList.AddWidget( widget );
+		CurrentBoundsList.AddWidget( widget );
 		ImGui.NewLine();
 	}
 
@@ -133,6 +132,6 @@ internal partial class ImGuiSystem
 			// TODO: Create a focus stack separate from draw order.
 			FocusedWindowId = WindowStack.Peek().Id;
 		}
-		CurrentDrawList.AddWindow( popped );
+		CurrentBoundsList.AddWindow( popped );
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace Duccsoft.ImGui;
+﻿using Duccsoft.ImGui.Rendering;
+
+namespace Duccsoft.ImGui;
 
 internal class TextWidget : Widget
 {
@@ -12,8 +14,8 @@ internal class TextWidget : Widget
 
 	public override Vector2 Size => ImGui.CalcTextSize( Text );
 
-	public override void Paint( ImGuiPainter painter )
+	public override void Draw( ImDrawList drawList )
 	{
-		painter.DrawText( Text, ScreenRect );
+		drawList.AddText( ScreenPosition, ImGui.GetColorU32( ImGuiCol.Text ), Text );
 	}
 }

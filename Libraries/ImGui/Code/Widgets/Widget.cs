@@ -1,4 +1,6 @@
-﻿namespace Duccsoft.ImGui;
+﻿using Duccsoft.ImGui.Rendering;
+
+namespace Duccsoft.ImGui;
 
 internal abstract class Widget : IUniqueId
 {
@@ -25,7 +27,7 @@ internal abstract class Widget : IUniqueId
 	// we check the history of this widget to determine its likely state while building the UI.
 
 	public Widget Previous => ImGuiSystem.Current.GetPreviousWidget( Id );
-	public bool WasVisible => ImGuiSystem.Current.PreviousDrawList.IsVisible( Id );
+	public bool WasVisible => ImGuiSystem.Current.PreviousBoundsList.IsVisible( Id );
 	#endregion
 
 	/// <summary>
@@ -43,7 +45,7 @@ internal abstract class Widget : IUniqueId
 		UpdateInput();
 	}
 
-	public abstract void Paint( ImGuiPainter painter );
+	public abstract void Draw( ImDrawList drawList );
 
 	public virtual void UpdateInput()
 	{

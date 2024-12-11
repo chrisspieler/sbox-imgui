@@ -6,7 +6,7 @@ namespace Duccsoft.ImGui;
 /// <summary>
 /// Represents every widget that is ready to be drawn in a frame.
 /// </summary>
-internal class DrawList
+internal class BoundsList
 {
 	public IEnumerable<Window> Windows => WindowIds.Values;
 	public Dictionary<int, Window> WindowIds { get; set; } = new();

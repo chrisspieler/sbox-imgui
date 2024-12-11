@@ -1,4 +1,6 @@
-﻿namespace Duccsoft.ImGui;
+﻿using Duccsoft.ImGui.Rendering;
+
+namespace Duccsoft.ImGui;
 
 internal class ImageWidget : Widget
 {
@@ -24,8 +26,9 @@ internal class ImageWidget : Widget
 
 	public override Vector2 Size => ImageSize;
 
-    public override void Paint(ImGuiPainter painter)
-    {
-		painter.DrawRect( ScreenRect, ColorTexture, TintColor, UV0, UV1, cornerRadius: default, borderWidth: new Vector4( 2f ), borderColor: BorderColor );
-    }
+	public override void Draw( ImDrawList drawList )
+	{
+		drawList.AddRect( ScreenRect.TopLeft, ScreenRect.BottomRight, BorderColor, rounding: 0f, flags: ImDrawFlags.None, thickness: 2f );
+		drawList.AddImage( ColorTexture, ScreenRect.TopLeft, ScreenRect.BottomRight, UV0, UV1, TintColor );
+	}
 }
