@@ -17,7 +17,7 @@ internal class ButtonWidget : Element
 
 	public string Label { get; set; }
 
-	protected override void DrawSelf( ImDrawList drawList )
+	protected override void OnDrawSelf( ImDrawList drawList )
 	{
 		var buttonColor = ImGui.GetColorU32( ImGuiCol.Button );
 		if ( IsActive )

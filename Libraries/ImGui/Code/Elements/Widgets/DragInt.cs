@@ -38,9 +38,9 @@ internal class DragInt : Element
 	public string Format { get; set; }
 	public ImGuiSliderFlags Flags { get; set; }
 
-	public override void UpdateInput()
+	public override void OnUpdateInput()
 	{
-		base.UpdateInput();
+		base.OnUpdateInput();
 
 		if ( IsActive )
 		{
@@ -49,7 +49,7 @@ internal class DragInt : Element
 		}
 	}
 
-	protected override void DrawSelf( ImDrawList drawList )
+	protected override void OnDrawSelf( ImDrawList drawList )
 	{
 		var bgRect = new Rect( ScreenPosition, Size );
 		var bgColor = ImGui.GetColorU32( ImGuiCol.FrameBg );

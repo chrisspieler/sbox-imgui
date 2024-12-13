@@ -40,8 +40,9 @@ public static class ComponentExtensions
 
 	private static Dictionary<Type, Action<Component, PropertyDescription>> _propertyPrintStrategy = new()
 	{
-		{ typeof(System.Single), ImGuiFloatProperty },
-		{ typeof(System.Int32), ImGuiIntProperty },
+		{ typeof(float), ImGuiFloatProperty },
+		{ typeof(int), ImGuiIntProperty },
+		{ typeof(bool), ImGuiBoolProperty }
 	};
 
 	public static void ImGuiProperty( this Component component, PropertyDescription prop )
@@ -95,5 +96,11 @@ public static class ComponentExtensions
 		Func<int> getter = () => (int)prop.GetValue( component );
 		Action<int> setter = v => prop.SetValue( component, v );
 		ImGui.DragInt( prop.Name, getter, setter, 0.2f );
+	}
+
+	private static void ImGuiBoolProperty( Component component, PropertyDescription prop )
+	{
+		Action<bool> setter = v => prop.SetValue( component, v );
+		ImGui.Checkbox( prop.Name, (bool)prop.GetValue( component ), setter );
 	}
 }

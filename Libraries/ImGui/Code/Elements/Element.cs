@@ -172,6 +172,29 @@ public abstract class Element
 	public bool IsVisible { get; set; }
 	#endregion
 
+	#region Style
+	public ImGuiStyle Style => ImGui.GetStyle();
+	public Color32 TextColor => ImGui.GetColorU32( ImGuiCol.Text );
+	public Color32 FrameColor
+	{
+		get
+		{
+			if ( IsActive )
+			{
+				return ImGui.GetColorU32( ImGuiCol.FrameBgActive );
+			}
+			else if ( IsHovered )
+			{
+				return ImGui.GetColorU32( ImGuiCol.FrameBgHovered );
+			}
+			else
+			{
+				return ImGui.GetColorU32( ImGuiCol.FrameBg );
+			}
+		}
+	}
+	#endregion
+
 	/// <summary>
 	/// Add this element to its Parent, updates its input data, and calls ImGui.NewLine.
 	/// <br/><br/>
@@ -195,7 +218,7 @@ public abstract class Element
 	public virtual void OnEnd()
 	{
 		// Only after all children are added will we know what this item's bounds are.
-		UpdateInput();
+		OnUpdateInput();
 	}
 
 	// TODO: Replace this with AddToParent
@@ -211,7 +234,7 @@ public abstract class Element
 		ContentSize = ContentSize.ComponentMax( maxs );
 	}
 
-	public virtual void UpdateInput()
+	public virtual void OnUpdateInput()
 	{
 		IsHovered = false;
 
@@ -246,11 +269,11 @@ public abstract class Element
 		System.Focus( this );
 	}
 
-	protected virtual void DrawSelf( ImDrawList drawList ) { }
+	protected virtual void OnDrawSelf( ImDrawList drawList ) { }
 
 	public void Draw( ImDrawList drawList )
 	{
-		DrawSelf( drawList );
+		OnDrawSelf( drawList );
 		foreach( var child in Children )
 		{
 			child.Draw( drawList );

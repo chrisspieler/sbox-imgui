@@ -21,9 +21,9 @@ internal class WindowTitleBar : Element
 	private Rect TitleBarRect => new( Parent.ScreenPosition, Size );
 	private Vector2 TitleTextSize { get; set; }
 
-	public override void UpdateInput()
+	public override void OnUpdateInput()
 	{
-		base.UpdateInput();
+		base.OnUpdateInput();
 		Parent.IsDragged = IsActive && MouseState.LeftClickDragTotalDelta.Length > 5f;
 		if ( Parent.IsDragged && MouseState.LeftClickReleased )
 		{
@@ -38,7 +38,7 @@ internal class WindowTitleBar : Element
 		System.CustomWindowPositions[Window.Id] = Window.Position;
 	}
 
-	protected override void DrawSelf( ImDrawList drawList )
+	protected override void OnDrawSelf( ImDrawList drawList )
 	{
 		var titleBarRect = TitleBarRect;
 

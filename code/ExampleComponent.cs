@@ -12,6 +12,7 @@ public class ExampleComponent : Component
 		Duccs
 	}
 
+	[Property] public bool Checkbox { get; set; } = true;
 	[Property] public float DragFloat { get; set; } = 20f;
 	[Property] public Vector2 DragFloat2 { get; set; } = new Vector2( -20, 50 );
 	[Property] public Vector3 DragFloat3 { get; set; } = new Vector3( 10, -30, 50 );

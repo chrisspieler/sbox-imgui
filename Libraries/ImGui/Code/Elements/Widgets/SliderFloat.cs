@@ -34,9 +34,9 @@ internal class SliderFloat : Element
 	public float MaxValue { get; set; } = 256f;
 	public string Format { get; set; } = null;
 
-	public override void UpdateInput()
+	public override void OnUpdateInput()
 	{
-		base.UpdateInput();
+		base.OnUpdateInput();
 
 		if ( IsActive )
 		{
@@ -48,7 +48,7 @@ internal class SliderFloat : Element
 		}
 	}
 
-	protected override void DrawSelf( ImDrawList drawList )
+	protected override void OnDrawSelf( ImDrawList drawList )
 	{
 		var style = ImGui.GetStyle();
 

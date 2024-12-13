@@ -28,7 +28,7 @@ internal class ImageWidget : Element
 	public Color TintColor { get; set; }
 	public Color BorderColor { get; set; }
 
-	protected override void DrawSelf( ImDrawList drawList )
+	protected override void OnDrawSelf( ImDrawList drawList )
 	{
 		drawList.AddRect( ScreenRect.TopLeft, ScreenRect.BottomRight, BorderColor, rounding: 0f, flags: ImDrawFlags.None, thickness: 2f );
 		drawList.AddImage( ColorTexture, ScreenRect.TopLeft, ScreenRect.BottomRight, UV0, UV1, TintColor );

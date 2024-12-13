@@ -22,6 +22,12 @@ public static partial class ImGui
 		return button.IsReleased;
 	}
 
+	public static bool Checkbox( string label, bool value, Action<bool> valueChanged )
+	{
+		var checkbox = new Checkbox( CurrentWindow, label, value, valueChanged );
+		return checkbox.IsReleased;
+	}
+
 	public static bool DragInt( string label, Func<int> getter, Action<int> setter, float speed = 1.0f, int min = 0, int max = 0, string format = null, ImGuiSliderFlags flags = 0 )
 	{
 		_ = new DragInt( CurrentWindow, label, getter, setter, speed, min, max, format, flags );

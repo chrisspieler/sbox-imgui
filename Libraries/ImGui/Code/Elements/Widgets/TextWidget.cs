@@ -16,7 +16,7 @@ internal class TextWidget : Element
 
 	public string Text { get; set; }
 
-	protected override void DrawSelf( ImDrawList drawList )
+	protected override void OnDrawSelf( ImDrawList drawList )
 	{
 		drawList.AddText( ScreenPosition, ImGui.GetColorU32( ImGuiCol.Text ), Text );
 	}
