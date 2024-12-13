@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Duccsoft.ImGui.Elements;
+using System;
 using System.Collections.Generic;
 
 namespace Duccsoft.ImGui;
@@ -12,6 +13,7 @@ internal partial class ImGuiSystem
 	public Stack<Window> WindowStack { get; private init; } = new();
 	public IdStack IdStack { get; private init; } = new();
 	public Dictionary<int, Vector2> CustomWindowPositions { get; private set; } = new();
+	private Dictionary<int, Element> CurrentElements { get; set; } = new();
 
 	public Window CurrentWindow
 	{
@@ -23,87 +25,72 @@ internal partial class ImGuiSystem
 			return WindowStack.Peek();
 		}
 	}
-	public int CurrentWindowCount => CurrentBoundsList.WindowIds.Values.Count;
 
 	public Vector2 NextWindowPosition { get; set; }
 	public Vector2 NextWindowPivot { get; set; }
 	public Vector2 NextWindowSize { get; set; }
 	public bool ShouldFocusNextWindow { get; set; } = false;
+
 	public int? FocusedWindowId { get; private set; }
-	public Window FocusedWindow
-	{
-		get 
-		{
-			if ( !FocusedWindowId.HasValue )
-				return null;
+	public int? FocusedElementId { get; private set; }
+	public int ClickedElementId { get; set; }
 
-			return Window.Get( FocusedWindowId.Value );
-		}
+	private void AddElement( Element element )
+	{
+		// Items will share an ID in some common cases.
+		if ( CurrentElements.ContainsKey( element.Id ) )
+			return;
+		
+		CurrentElements.Add( element.Id, element );
+		CurrentBoundsList.AddElement( element, element.Parent );
 	}
 
-	public int ClickedWidgetId { get; set; }
-	public int CurrentWidgetCount => CurrentBoundsList.WidgetIds.Values.Count;
-	public Widget CurrentWidget => CurrentWindow?.CurrentWidget;
+	internal Element GetElement( int id ) => CurrentElements[id];
 
-	public Window GetPreviousWindow( int id )
+	public void Focus( Element element )
 	{
-		PreviousBoundsList.WindowIds.TryGetValue( id, out var previous );
-		return previous;
+		FocusedWindowId = element?.Window?.Id;
+		FocusedElementId = element?.Id;
 	}
 
-	public Widget GetPreviousWidget( int id )
-	{
-		PreviousBoundsList.WidgetIds.TryGetValue( id, out var previous );
-		return previous;
-	}
-
-	public bool IsWindowAppearing( int id )
-	{
-		return GetPreviousWindow( id ) is null;
-	}
-
-	public bool IsWindowFocused( int id, ImGuiFocusedFlags flags = default )
-	{
-		if ( FocusedWindowId is null )
-			return false;
-
-		return FocusedWindowId == id;
-	}
-
-	public bool IsWindowHovered( int id, ImGuiHoveredFlags flags = default )
-	{
-		if ( HoveredWindow is null )
-			return false;
-
-		return HoveredWindow.Id == id;
-	}
-
-	public void Focus( Window window )
-	{
-		FocusedWindowId = window?.Id;
-	}
-
-	public void ClearWindows()
+	private void ClearElements()
 	{
 		PreviousBoundsList = CurrentBoundsList;
 		CurrentBoundsList = new();
+		CurrentElements.Clear();
 		WindowStack.Clear();
+	}
+	
+	private void FinalizeBounds()
+	{
+		CurrentBoundsList.ApplyElementFlags();
+		CurrentBoundsList.SortWindows();
 	}
 
 	public void BeginWindow( string name, Action onClose, ImGuiWindowFlags flags )
 	{
+		// TODO: Move this method in to Window.Begin()
+
 		if ( CustomWindowPositions.TryGetValue( ImGui.GetID( name ), out var customPos ) )
 		{
 			NextWindowPosition = customPos;
 		}
-		var next = new Window( name, NextWindowPosition, NextWindowPivot, NextWindowSize, flags );
+		var nextWindow = new Window( name, NextWindowPosition, NextWindowPivot, NextWindowSize, flags );
+		if ( !flags.HasFlag( ImGuiWindowFlags.NoTitleBar ) )
+		{
+			nextWindow.CursorPosition = Vector2.Zero;
+			_ = new WindowTitleBar( nextWindow );
+			ImGui.NewLine();
+			nextWindow.CursorPosition += Style.WindowPadding;
+			nextWindow.CursorStartPosition = nextWindow.CursorPosition;
+		}
 		if ( ShouldFocusNextWindow )
 		{
-			Focus( next );
+			Focus( nextWindow );
 		}
-		if ( next.IsAppearing && !next.Flags.HasFlag( ImGuiWindowFlags.NoFocusOnAppearing ) )
+		if ( nextWindow.IsAppearing && !nextWindow.WindowFlags.HasFlag( ImGuiWindowFlags.NoFocusOnAppearing ) )
 		{
-			Focus( next );
+			Focus( nextWindow );
 		}
 		ResetNextWindowSettings();
 	}
@@ -116,22 +103,28 @@ internal partial class ImGuiSystem
 		ShouldFocusNextWindow = false;
 	}
 
-	public void AddWidget( Window window, Widget widget )
-	{
-		window.AddChild( widget );
-		CurrentBoundsList.AddWidget( widget );
-		ImGui.NewLine();
-	}
-
+	
 	public void EndWindow()
 	{
+		// TODO: Move this method in to Window.End()
+
 		var popped = WindowStack.Pop();
 		IdStack.Pop();
+		popped.End();
 		if ( WindowStack.Count > 0 && popped.Id == FocusedWindowId )
 		{
 			// TODO: Create a focus stack separate from draw order.
 			FocusedWindowId = WindowStack.Peek().Id;
 		}
-		CurrentBoundsList.AddWindow( popped );
+		AddElementRecursive( popped );
+	}
+
+	private void AddElementRecursive( Element element )
+	{
+		AddElement( element );
+		foreach( var child in element.Children )
+		{
+			AddElement( child );
+		}
 	}
 }

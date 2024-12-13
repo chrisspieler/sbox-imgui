@@ -1,28 +1,25 @@
 ﻿using Duccsoft.ImGui.Rendering;
-using System.Reflection;
-using static Sandbox.VertexLayout;
 
-namespace Duccsoft.ImGui;
+namespace Duccsoft.ImGui.Elements;
 
-internal class WindowTitleBar : Widget
+internal class WindowTitleBar : Element
 {
 	public WindowTitleBar( Window parent ) : base( parent )
 	{
-		Show();
-	}
+		TitleText = parent.Name;
 
+		TitleTextSize = ImGui.CalcTextSize( TitleText ) + ImGui.GetStyle().FramePadding * 2;
+
+		Begin();
+	}
 	public static Color32 TitleActiveColor => ImGui.GetColorU32( ImGuiCol.TitleBgActive );
 	public static Color32 TitleInactiveColor => ImGui.GetColorU32( ImGuiCol.TitleBg );
 
-	public override Vector2 Size => GetTitleTextSize() * new Vector2( 2, 1 );
+	public override Vector2 Size => new( Parent.Size.x, ImGui.GetFrameHeightWithSpacing() );
 
-	private Rect GetTitleBarRect()
-	{
-		var size = new Vector2( Parent.ScreenRect.Width, ImGui.GetFrameHeightWithSpacing() );
-		return new Rect( Parent.ScreenRect.Position, size );
-	}
-
-	private Vector2 GetTitleTextSize() => ImGui.CalcTextSize( Parent.Name ) + ImGui.GetStyle().FramePadding * 2;
+	public string TitleText { get; set; }
+	private Rect TitleBarRect => new( Parent.ScreenPosition, Size );
+	private Vector2 TitleTextSize { get; set; }
 
 	public override void UpdateInput()
 	{
@@ -37,9 +34,9 @@ internal class WindowTitleBar : Widget
 		}
 	}
 
-	public override void Draw( ImDrawList drawList )
+	protected override void DrawSelf( ImDrawList drawList )
 	{
-		var titleBarRect = GetTitleBarRect();
+		var titleBarRect = TitleBarRect;
 
 		// Paint title background
 		var titleBarColor = Parent.IsFocused
@@ -48,10 +45,10 @@ internal class WindowTitleBar : Widget
 		drawList.AddRectFilled( titleBarRect.Position, titleBarRect.Position + titleBarRect.Size, titleBarColor );
 
 		// Paint title
-		var textPanelSize = GetTitleTextSize();
+		var textPanelSize = TitleTextSize;
 		var xTextOffset = titleBarRect.Size.x * 0.5f - textPanelSize.x * 0.5f;
 		var yTextOffset = textPanelSize.y * 0.25f;
 		var textPanelPos = titleBarRect.Position + new Vector2( xTextOffset, yTextOffset );
-		drawList.AddText( textPanelPos, ImGui.GetColorU32( ImGuiCol.Text ), Parent.Name );
+		drawList.AddText( textPanelPos, ImGui.GetColorU32( ImGuiCol.Text ), TitleText );
 	}
 }

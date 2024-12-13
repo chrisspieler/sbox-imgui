@@ -41,7 +41,6 @@ public class ImDrawList
 
 		// Background
 		attributes.SetCombo( "D_BACKGROUND_IMAGE", 0 );
-
 		if ( borderThickness >= 1f )
 		{
 			// Border

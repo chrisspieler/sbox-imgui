@@ -72,16 +72,16 @@ public static partial class ImGui
 
 	public static void NewLine()
 	{
-		if ( CurrentWidget is null )
+		if ( CurrentItem is null )
 			return;
 
-		var yOffset = CurrentWidget.Position.y + CurrentWidget.Size.y + GetStyle().ItemSpacing.y;
+		var yOffset = CurrentItem.Position.y + CurrentItem.Size.y + GetStyle().ItemSpacing.y;
 		SetCursorPos( new Vector2( GetCursorStartPos().x, yOffset ) );
 	}
 
 	public static void SameLine( float offsetFromStartX = 0f, float spacing = -1f )
 	{
-		if ( CurrentWidget is null )
+		if ( CurrentItem is null )
 			return;
 
 
@@ -91,7 +91,7 @@ public static partial class ImGui
 				spacing = 0f;
 
 			var xPos = offsetFromStartX + spacing;
-			var yPos = CurrentWidget.Position.y;
+			var yPos = CurrentItem.Position.y;
 			SetCursorPos( new Vector2( xPos, yPos ) );
 		}
 		else
@@ -99,8 +99,8 @@ public static partial class ImGui
 			if ( spacing < 0f )
 				spacing = GetStyle().ItemSpacing.x;
 
-			var cursorOffset = new Vector2( CurrentWidget.Size.x + spacing, 0f );
-			SetCursorPos( CurrentWidget.Position + cursorOffset );
+			var cursorOffset = new Vector2( CurrentItem.Size.x + spacing, 0f );
+			SetCursorPos( CurrentItem.Position + cursorOffset );
 		}
 	}
 }

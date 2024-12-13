@@ -1,20 +1,22 @@
 ﻿using Duccsoft.ImGui.Rendering;
 
-namespace Duccsoft.ImGui;
+namespace Duccsoft.ImGui.Elements;
 
-internal class TextWidget : Widget
+internal class TextWidget : Element
 {
 	public TextWidget( Window parent, string text ) : base( parent )
 	{
 		Text = text;
-		Show();
+
+		Size = ImGui.CalcTextSize( Text );
+
+		Begin();
+		End();
 	}
 
 	public string Text { get; set; }
 
-	public override Vector2 Size => ImGui.CalcTextSize( Text );
-
-	public override void Draw( ImDrawList drawList )
+	protected override void DrawSelf( ImDrawList drawList )
 	{
 		drawList.AddText( ScreenPosition, ImGui.GetColorU32( ImGuiCol.Text ), Text );
 	}

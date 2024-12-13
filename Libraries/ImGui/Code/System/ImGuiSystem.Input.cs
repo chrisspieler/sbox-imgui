@@ -1,5 +1,4 @@
 ﻿using Sandbox.UI;
-using System.Linq;
 
 namespace Duccsoft.ImGui;
 
@@ -69,19 +68,20 @@ internal partial class ImGuiSystem
 		};
 	}
 
-	public Window HoveredWindow { get; set; }
+	public int HoveredItemId { get; set; }
+	public int HoveredWindowId { get; set; }
 
-	private void UpdateWindowFocus()
+	private void InitializeInput()
 	{
-		UpdateHoveredWindow();
-		if ( MouseState.LeftClickPressed )
-		{
-			Focus( HoveredWindow );
-		}
-		HoveredWindow?.UpdateInput();
+		UpdateMouseState();
 	}
 
-	private void UpdateInputState()
+	private void ClearInput()
+	{
+		ClearMouseState();
+	}
+
+	private void UpdateMouseState()
 	{
 		MouseState.Position = Mouse.Position;
 		switch ( MouseButton )
@@ -98,11 +98,11 @@ internal partial class ImGuiSystem
 		}
 	}
 
-	private void ClearInputState()
+	private void ClearMouseState()
 	{
 		if ( !MouseState.LeftClickDown )
 		{
-			ClickedWidgetId = 0;
+			ClickedElementId = 0;
 		}
 		MouseState.LeftClickPressed = false;
 		MouseState.LeftClickReleased = false;
@@ -113,31 +113,5 @@ internal partial class ImGuiSystem
 		MouseState.MiddleClickPressed = false;
 		MouseState.MiddleClickReleased = false;
 		MouseState.MiddleClickDragFrameDelta = 0f;
-	}
-
-	public void UpdateHoveredWindow()
-	{
-		var windows = CurrentBoundsList.Windows.ToArray();
-		var lastMouseOver = -1;
-		for ( int i = 0; i < windows.Length; i++ )
-		{
-			var window = windows[i];
-			window.IsHovered = false;
-			if ( window.IsMouseInScreenRect )
-			{
-				lastMouseOver = i;
-				if ( window.IsFocused )
-				{
-					break;
-				}
-			}
-		}
-
-		if ( lastMouseOver < 0 )
-			return;
-
-		var hovered = windows[lastMouseOver];
-		hovered.IsHovered = true;
-		HoveredWindow = hovered;
 	}
 }

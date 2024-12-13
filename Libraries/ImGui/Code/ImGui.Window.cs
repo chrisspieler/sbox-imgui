@@ -13,9 +13,9 @@ public static partial class ImGui
 
 	// TODO: Allow windows to be collapsed.
 	public static bool IsWindowCollapsed() => throw new NotImplementedException();
-	public static bool IsWindowAppearing() => CurrentWindow?.IsAppearing() == true;
-	public static bool IsWindowFocused( ImGuiFocusedFlags flags ) => CurrentWindow?.IsFocused( flags ) == true;
-	public static bool IsWindowHovered( ImGuiHoveredFlags flags ) => CurrentWindow?.IsHovered( flags ) == true;
+	public static bool IsWindowAppearing() => CurrentWindow?.IsAppearing == true;
+	public static bool IsWindowFocused( ImGuiFocusedFlags flags ) => CurrentWindow?.IsFocused == true; // TODO: Use flags
+	public static bool IsWindowHovered( ImGuiHoveredFlags flags ) => CurrentWindow?.IsHovered == true; // TODO: Use flags
 
 	public static void End()
 	{
@@ -60,7 +60,7 @@ public static partial class ImGui
 		if ( CurrentWindow is null )
 			return;
 
-		CurrentWindow.ScreenPosition = position;
+		CurrentWindow.Position = position;
 	}
 
 	public static void SetNextWindowSize( Vector2 size, ImGuiCond condition = default )
@@ -73,7 +73,7 @@ public static partial class ImGui
 		var window = ImGuiSystem.Current.CurrentWindow;
 		if ( window is not null )
 		{
-			window.CustomScreenSize = size;
+			window.CustomSize = size;
 		}
 	}
 

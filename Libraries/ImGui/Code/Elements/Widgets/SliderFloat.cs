@@ -1,9 +1,9 @@
 ﻿using Duccsoft.ImGui.Rendering;
 using System;
 
-namespace Duccsoft.ImGui;
+namespace Duccsoft.ImGui.Elements;
 
-internal class SliderFloat : Widget
+internal class SliderFloat : Element
 {
 	public SliderFloat( Window parent, string label, Func<float> getter, Action<float> setter, 
 		float valueMin, float valueMax, string format ) 
@@ -15,7 +15,11 @@ internal class SliderFloat : Widget
 		MinValue = valueMin;
 		MaxValue = valueMax;
 		Format = format;
-		Show();
+
+		Size = new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
+
+		Begin();
+		End();
 	}
 
 	public string Label { get; set; }
@@ -29,8 +33,6 @@ internal class SliderFloat : Widget
 	public float MinValue { get; set; } = -128f;
 	public float MaxValue { get; set; } = 256f;
 	public string Format { get; set; } = null;
-
-	public override Vector2 Size => new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
 
 	public override void UpdateInput()
 	{
@@ -46,8 +48,10 @@ internal class SliderFloat : Widget
 		}
 	}
 
-	public override void Draw( ImDrawList drawList )
+	protected override void DrawSelf( ImDrawList drawList )
 	{
+		var style = ImGui.GetStyle();
+
 		// Paint background
 		var bgRect = new Rect( ScreenPosition, Size );
 		var bgColor = ImGui.GetColorU32( ImGuiCol.FrameBg );
@@ -62,9 +66,9 @@ internal class SliderFloat : Widget
 		drawList.AddRectFilled( ScreenPosition, ScreenPosition + Size, bgColor );
 
 		// Paint grab
-		var grabSize = new Vector2( Style.GrabMinSize, ImGui.GetFrameHeight() );
+		var grabSize = new Vector2( style.GrabMinSize, ImGui.GetFrameHeight() );
 		var xGrabPos = Value.Remap( MinValue, MaxValue, 0f, bgRect.Size.x - grabSize.x );
-		var grabPos = ScreenPosition + new Vector2( xGrabPos, Style.FramePadding.y * 0.5f );
+		var grabPos = ScreenPosition + new Vector2( xGrabPos, style.FramePadding.y * 0.5f );
 		var grabColor = ImGui.GetColorU32( ImGuiCol.SliderGrab );
 		if ( IsActive )
 		{
@@ -75,7 +79,7 @@ internal class SliderFloat : Widget
 		// Paint value
 		var text = Value.ToString( Format );
 		var xOffsetText = bgRect.Size.x * 0.5f;
-		var textPos = ScreenPosition + new Vector2( xOffsetText, Style.FramePadding.y );
+		var textPos = ScreenPosition + new Vector2( xOffsetText, style.FramePadding.y );
 		drawList.AddText( textPos, ImGui.GetColorU32( ImGuiCol.Text ), text );
 	}
 }

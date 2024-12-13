@@ -12,17 +12,21 @@ internal partial class ImGuiSystem : GameObjectSystem<ImGuiSystem>
 
 	private void StartUpdate()
 	{
+		if ( !Game.IsPlaying )
+			return;
+
+		ClearElements();
 		UpdateTargetCamera();
-		// Input
-		UpdateInputState();
+		InitializeInput();
 	}
 
 	private void FinishUpdate()
 	{
-		// Input
-		UpdateWindowFocus();
-		ClearInputState();
-		// Rendering
-		Draw();
+		if ( !Game.IsPlaying )
+			return;
+
+		FinalizeBounds();
+		BuildDrawLists();
+		ClearInput();
 	}
 }

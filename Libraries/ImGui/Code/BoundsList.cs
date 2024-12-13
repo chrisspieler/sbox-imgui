@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Duccsoft.ImGui.Elements;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Duccsoft.ImGui;
@@ -8,60 +10,199 @@ namespace Duccsoft.ImGui;
 /// </summary>
 internal class BoundsList
 {
-	public IEnumerable<Window> Windows => WindowIds.Values;
-	public Dictionary<int, Window> WindowIds { get; set; } = new();
-	public IEnumerable<Widget> Widgets => WidgetIds.Values;
-	public Dictionary<int, Widget> WidgetIds { get; set; } = new();
+	private static ImGuiSystem System => ImGuiSystem.Current;
 
-	public Widget this[int id] => WidgetIds[id];
-
-	public void AddWindow( Window window )
+	internal class BoundsElement
 	{
-		if ( window is null )
-			return;
+		public BoundsElement( int id, BoundsElement parent, ElementFlags inputState, Rect screenBounds )
+		{
+			Id = id;
+			Parent = parent;
+			ElementFlags = inputState;
+			ScreenBounds = screenBounds;
+		}
 
-		WindowIds[window.Id] = window;
+		public bool IsWindow => Parent is null;
+		public int Id { get; set; }
+		public BoundsElement Parent { get; set; }
+		public ElementFlags ElementFlags { get; set; }
+		public Rect ScreenBounds { get; set; }
+
+		public bool IsHovered => ElementFlags.IsHovered();
+		public bool IsFocused => ElementFlags.IsFocused();
+		public bool IsActive => ElementFlags.IsActive();
+		public bool IsDragged => ElementFlags.IsDragged();
+		public bool IsVisible => ElementFlags.IsVisible();
+
+		public bool IsAncestor( BoundsElement element )
+		{
+			if ( element is null || Parent is null )
+				return false;
+
+			if ( Parent == element )
+				return true;
+
+			return Parent.IsAncestor( element );
+		}
+
+		public static BoundsElement From( Element element, BoundsElement parent )
+		{
+			if ( element is null )
+				return null;
+
+			return new( element.Id, parent, default, element.ScreenRect );
+		}
 	}
 
-	public void AddWidget( Widget widget )
-	{
-		if ( widget is null )
-			return;
+	private Dictionary<int, BoundsElement> Elements { get; set; } = new();
+	private List<BoundsElement> RootElements { get; set; } = new();
+	public IEnumerable<BoundsElement> GetRootElements() => RootElements;
 
-		WidgetIds[widget.Id] = widget;
+
+	public bool HasId( int id ) => Elements.ContainsKey( id );
+
+	public void AddElement( Element element, Element parent )
+	{
+		ArgumentNullException.ThrowIfNull( element );
+
+		BoundsElement parentBounds = null;
+		if ( parent is not null )
+		{
+			if ( !Elements.TryGetValue( parent.Id, out parentBounds ) )
+				throw new InvalidOperationException( $"Attempted to add child ({element.GetType().Name},{element.Id}) of parent ({parent.GetType().Name},{parent.Id}) before parent was added to BoundsList." );
+		}
+
+		AddElement( element, parentBounds );
+	}
+
+	private void AddElement( Element element, BoundsElement parent )
+	{
+		var boundsElement = BoundsElement.From( element, parent );
+		if ( parent is null )
+		{
+			RootElements.Add( boundsElement );
+		}
+		Elements.Add( element.Id, boundsElement );
+	}
+
+	public BoundsElement GetElement( int id )
+	{
+		Elements.TryGetValue( id, out var element );
+		return element;
+	}
+
+	public ElementFlags GetElementFlags( int id )
+	{
+		Elements.TryGetValue( id, out var element );
+		if ( element is null )
+			return default;
+
+		return element.ElementFlags;
 	}
 
 	public bool IsVisible( int id )
 	{
-		if ( !WidgetIds.TryGetValue( id, out var widget ) )
+		if ( !Elements.TryGetValue( id, out var bounds ) )
 			return false;
 
-		return IsVisible( widget );
-	}
+		if ( bounds.IsWindow )
+			return IsWindowVisible( bounds );
 
-	public bool IsVisible( Widget widget )
-	{
-		if ( widget is null || !WidgetIds.ContainsKey( widget.Id ) )
-			return false;
-
-		// The last window in the DrawList is the topmost window.
-		foreach ( var window in WindowIds.Values.Reverse() )
+		foreach( var window in RootElements )
 		{
-			if ( widget.Parent == window )
-			{
-				// We've reached this widget's window, and the widget hasn't been covered so far.
+			// If we are contained within the topmost window, are automatically visible.
+			if ( bounds.IsAncestor( window ) )
 				return true;
-			}
 
-			var widgetBounds = widget.ScreenRect;
-
-			// Check whether a window rendered later than this widget has fully obscured this widget.
-			if ( window.ScreenRect.IsInside( widgetBounds, fullyInside: true ) )
+			if ( window.ScreenBounds.IsInside( bounds.ScreenBounds, true ) )
 			{
 				return false;
 			}
 		}
-		// Somehow, this widget has no parent window.
 		return false;
+	}
+
+	private bool IsWindowVisible( BoundsElement bounds )
+	{
+		foreach ( var otherWindow in RootElements )
+		{
+			if ( bounds.Id == otherWindow.Id )
+				continue;
+
+			if ( otherWindow.ScreenBounds.IsInside( bounds.ScreenBounds, true ) )
+				return false;
+		}
+		return true;
+	}
+
+	private void CascadeElementFlag( int id, ElementFlags elementFlag, bool enabled )
+	{
+		var element = Elements[id];
+		SetElementFlag( id, elementFlag, enabled );
+		var parent = element.Parent;
+		// Don't cascade flag disables
+		// Why? Consider the case where an item is no longer hovered, but its window still is hovered.]
+		if ( enabled && parent is not null )
+		{
+			// Cascade flag enables. E.g., if we click on an item, its window should be hovered.
+			CascadeElementFlag( parent.Id, elementFlag, true );
+		}
+	}
+
+	private void SetElementFlag( int id, ElementFlags elementFlag, bool enabled )
+	{
+		var element = Elements[id];
+		if ( enabled )
+		{
+			element.ElementFlags |= elementFlag;
+		}
+		else
+		{
+			element.ElementFlags &= ~elementFlag;
+		}
+	}
+
+	public void SortWindows()
+	{
+		for ( int i = 0; i < RootElements.Count; i++ )
+		{
+			var lastIdx = RootElements.Count - 1;
+			// If we've reached the end of the list, either there is no focused window, or it's already on top.
+			if ( i == lastIdx )
+				continue;
+
+			var window = RootElements[i];
+			if ( window.IsFocused )
+			{
+				var temp = RootElements[lastIdx];
+				RootElements[lastIdx] = window;
+				RootElements[i] = temp;
+				return;
+			}
+		}
+	}
+
+	public void ApplyElementFlags()
+	{
+		foreach( var window in RootElements )
+		{
+			var current = System.GetElement( window.Id );
+			var isFocused = window.Id == System.FocusedWindowId;
+			SetElementFlag( window.Id, ElementFlags.IsFocused, isFocused );
+			SetElementFlag( window.Id, ElementFlags.IsHovered, current.IsHovered );
+			SetElementFlag( window.Id, ElementFlags.IsVisible, IsVisible( window.Id ) );
+		}
+		foreach( var element in Elements.Values )
+		{
+			if ( element.IsWindow )
+				continue;
+
+			var current = System.GetElement(element.Id);
+			CascadeElementFlag( current.Id, ElementFlags.IsHovered, current.IsHovered );
+			SetElementFlag( current.Id, ElementFlags.IsFocused, current.IsFocused );
+			SetElementFlag( current.Id, ElementFlags.IsActive, current.IsActive );
+			SetElementFlag( current.Id, ElementFlags.IsDragged, current.IsDragged );
+			SetElementFlag( current.Id, ElementFlags.IsVisible, IsVisible( current.Id ) );
+		}
 	}
 }

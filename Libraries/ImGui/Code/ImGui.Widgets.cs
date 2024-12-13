@@ -1,4 +1,5 @@
 ﻿using System;
+using Duccsoft.ImGui.Elements;
 
 namespace Duccsoft.ImGui;
 
@@ -6,7 +7,7 @@ public static partial class ImGui
 {
 	public static bool IsItemClicked( ImGuiMouseButton button = ImGuiMouseButton.Left )
 	{
-		return CurrentWidget.IsClicked( button );
+		return System.ClickedElementId == CurrentItem?.Id;
 	}
 
 	public static void Text( string formatString, params object[] args )

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Duccsoft.ImGui.Elements;
+using System;
+using System.Linq;
 
 namespace Duccsoft.ImGui;
 
@@ -42,24 +44,32 @@ internal partial class ImGuiSystem
 		}
 	}
 
-	private void Draw()
+	private void BuildDrawLists()
 	{
 		if ( !Game.IsPlaying )
 			return;
 
-		Window focusedWindow = null;
-		foreach ( var window in CurrentBoundsList.Windows )
+		void DrawWindow( int? id )
+		{
+			if ( id is null )
+				return;
+
+			var currentWindow = GetElement( id.Value ) as Window;
+			currentWindow.Draw( currentWindow.DrawList );
+		}
+
+		int? focusedWindow = null;
+		foreach ( var window in CurrentBoundsList.GetRootElements() )
 		{
 			if ( window.IsFocused )
 			{
-				focusedWindow = window;
+				focusedWindow = window.Id;
 				continue;
 			}
-			window.Draw();
+			DrawWindow( window.Id );
 		}
-		// Draw the focused window last.
-		focusedWindow?.Draw();
-		ClearWindows();
+		// Draw the focused window on top of everything else.
+		DrawWindow( focusedWindow );
 	}
 
 	private void Render( SceneCamera camera )
@@ -68,18 +78,16 @@ internal partial class ImGuiSystem
 			return;
 
 		int commandCount = 0;
-		Window focusedWindow = null;
-		foreach ( var window in PreviousBoundsList.Windows )
+		var windows = CurrentBoundsList
+			.GetRootElements()
+			.Select( r => GetElement( r.Id ) )
+			.OfType<Window>();
+		foreach ( var window in windows )
 		{
 			commandCount += window.DrawList.Count;
-			if ( window.IsFocused )
-			{
-				focusedWindow = window;
-				continue;
-			}
+			// We assume the windows were already sorted in to the correct order.
 			window.DrawList.Render();
 		}
-		// Render the focused window last.
-		focusedWindow?.DrawList?.Render();
+		// Log.Info( $"draw {commandCount} total command(s) from {windows.Count()} window(s)." );
 	}
 }

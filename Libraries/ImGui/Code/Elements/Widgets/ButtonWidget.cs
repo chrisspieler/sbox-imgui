@@ -1,37 +1,31 @@
 ﻿using Duccsoft.ImGui.Rendering;
-using System.Reflection;
 
-namespace Duccsoft.ImGui;
+namespace Duccsoft.ImGui.Elements;
 
-internal class ButtonWidget : Widget
+internal class ButtonWidget : Element
 {
 	public ButtonWidget( Window parent, string label ) : base( parent )
 	{
 		Label = label;
 		Id = ImGui.GetID( Label.GetHashCode() );
-		Show();
+
+		Size = ImGui.CalcTextSize( Label ) + ImGui.GetStyle().FramePadding;
+
+		Begin();
+		End();
 	}
 
 	public string Label { get; set; }
 	public bool IsReleased { get; set; }
-	public override Vector2 Size => ImGui.CalcTextSize( Label ) + ImGui.GetStyle().FramePadding;
 
 	public override void UpdateInput()
 	{
 		base.UpdateInput();
-		IsReleased = false;
 
-		var lastDrawList = ImGuiSystem.Current.PreviousBoundsList;
-		if ( lastDrawList.WidgetIds.TryGetValue( Id, out var lastWidget ) )
-		{
-			if ( lastWidget.IsActive && !MouseState.LeftClickDown )
-			{
-				IsReleased = true;
-			}
-		}
+		IsReleased = PreviousInputState.HasFlag( ElementFlags.IsActive ) && !MouseState.LeftClickDown;
 	}
 
-	public override void Draw( ImDrawList drawList )
+	protected override void DrawSelf( ImDrawList drawList )
 	{
 		var buttonColor = ImGui.GetColorU32( ImGuiCol.Button );
 		if ( IsActive )

@@ -1,9 +1,9 @@
 ﻿using Duccsoft.ImGui.Rendering;
 using System;
 
-namespace Duccsoft.ImGui;
+namespace Duccsoft.ImGui.Elements;
 
-internal class DragInt : Widget
+internal class DragInt : Element
 {
 	public DragInt( Window parent, string label, Func<int> getter, Action<int> setter,
 		float speed, int minValue, int maxValue, string format, ImGuiSliderFlags flags ) 
@@ -17,7 +17,11 @@ internal class DragInt : Widget
 		MaxValue = maxValue;
 		Format = format;
 		Flags = flags;
-		Show();
+
+		Size = new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
+
+		Begin();
+		End();
 	}
 
 	public string Label { get; set; }
@@ -34,8 +38,6 @@ internal class DragInt : Widget
 	public string Format { get; set; }
 	public ImGuiSliderFlags Flags { get; set; }
 
-	public override Vector2 Size => new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
-
 	public override void UpdateInput()
 	{
 		base.UpdateInput();
@@ -47,7 +49,7 @@ internal class DragInt : Widget
 		}
 	}
 
-	public override void Draw( ImDrawList drawList )
+	protected override void DrawSelf( ImDrawList drawList )
 	{
 		var bgRect = new Rect( ScreenPosition, Size );
 		var bgColor = ImGui.GetColorU32( ImGuiCol.FrameBg );
@@ -64,7 +66,7 @@ internal class DragInt : Widget
 		// Paint value
 		var text = Value.ToString( Format );
 		var xOffsetText = bgRect.Size.x * 0.5f;
-		var textPos = ScreenPosition + new Vector2( xOffsetText, Style.FramePadding.y );
+		var textPos = ScreenPosition + new Vector2( xOffsetText, ImGui.GetStyle().FramePadding.y );
 		drawList.AddText( textPos, ImGui.GetColorU32( ImGuiCol.Text ), text );
 	}
 }

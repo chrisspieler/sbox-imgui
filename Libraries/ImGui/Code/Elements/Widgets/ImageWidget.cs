@@ -1,8 +1,8 @@
 ﻿using Duccsoft.ImGui.Rendering;
 
-namespace Duccsoft.ImGui;
+namespace Duccsoft.ImGui.Elements;
 
-internal class ImageWidget : Widget
+internal class ImageWidget : Element
 {
     public ImageWidget( Window parent, Texture texture, Vector2 size, 
 		Vector2 uv0, Vector2 uv1, Color tintColor, Color borderColor  ) 
@@ -14,7 +14,11 @@ internal class ImageWidget : Widget
 		UV1 = uv1;
 		TintColor = tintColor;
 		BorderColor = borderColor;
-		Show();
+
+		Size = ImageSize;
+
+		Begin();
+		End();
     }
 
 	public Texture ColorTexture { get; set; }
@@ -24,9 +28,7 @@ internal class ImageWidget : Widget
 	public Color TintColor { get; set; }
 	public Color BorderColor { get; set; }
 
-	public override Vector2 Size => ImageSize;
-
-	public override void Draw( ImDrawList drawList )
+	protected override void DrawSelf( ImDrawList drawList )
 	{
 		drawList.AddRect( ScreenRect.TopLeft, ScreenRect.BottomRight, BorderColor, rounding: 0f, flags: ImDrawFlags.None, thickness: 2f );
 		drawList.AddImage( ColorTexture, ScreenRect.TopLeft, ScreenRect.BottomRight, UV0, UV1, TintColor );
