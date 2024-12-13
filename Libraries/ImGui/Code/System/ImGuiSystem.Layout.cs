@@ -10,10 +10,14 @@ internal partial class ImGuiSystem
 	// Keep the previous frame's bounds list so that we can check whether a widget
 	// drawn before a window was occluded by that window on the previous frame.
 	public BoundsList PreviousBoundsList { get; set; } = new();
+	public int? PreviousHoveredWindowId { get; set; }
+	public int? PreviousHoveredElementId { get; set; }
+
 	public Stack<Window> WindowStack { get; private init; } = new();
 	public IdStack IdStack { get; private init; } = new();
-	public Dictionary<int, Vector2> CustomWindowPositions { get; private set; } = new();
 	private Dictionary<int, Element> CurrentElements { get; set; } = new();
+
+	public Dictionary<int, Vector2> CustomWindowPositions { get; private set; } = new();
 
 	public Window CurrentWindow
 	{
@@ -57,13 +61,23 @@ internal partial class ImGuiSystem
 		FocusedElementId = element?.Id;
 	}
 
-	private void ClearElements()
+	private void SwapBounds()
 	{
 		PreviousBoundsList = CurrentBoundsList;
 		CurrentBoundsList = new();
+		PreviousHoveredWindowId = PreviousBoundsList.TraceWindow( MouseState.Position );
+		PreviousHoveredElementId = PreviousBoundsList.TraceElement( MouseState.Position );
+		// Log.Info( $"Hovered window: {PreviousHoveredWindowId}" );
+		// Log.Info( $"Hovered element: {PreviousHoveredElementId}" );
+	}
+
+	private void ClearElements()
+	{
 		CurrentElements.Clear();
 		WindowStack.Clear();
+		IdStack.Clear();
 	}
+
 	
 	private void FinalizeBounds()
 	{

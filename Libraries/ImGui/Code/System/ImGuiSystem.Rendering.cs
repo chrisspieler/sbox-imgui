@@ -81,13 +81,16 @@ internal partial class ImGuiSystem
 		var windows = CurrentBoundsList
 			.GetRootElements()
 			.Select( r => GetElement( r.Id ) )
-			.OfType<Window>();
-		foreach ( var window in windows )
+			.OfType<Window>()
+			.ToList();
+		// Log.Info( $"Printing Draw List" );
+		for ( int i = 0; i < windows.Count; i++ )
 		{
+			var window = windows[i];
 			commandCount += window.DrawList.Count;
+			// Log.Info( $"{i}: {window.Id}, {window.DrawList.Count} draw command(s)" );
 			// We assume the windows were already sorted in to the correct order.
 			window.DrawList.Render();
 		}
-		// Log.Info( $"draw {commandCount} total command(s) from {windows.Count()} window(s)." );
 	}
 }

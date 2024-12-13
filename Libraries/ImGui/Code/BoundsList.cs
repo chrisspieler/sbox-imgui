@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Duccsoft.ImGui;
 
@@ -14,17 +15,19 @@ internal class BoundsList
 
 	internal class BoundsElement
 	{
-		public BoundsElement( int id, BoundsElement parent, ElementFlags inputState, Rect screenBounds )
+		public BoundsElement( int id, BoundsElement parent, ElementFlags inputState, Rect screenBounds, List<int> children = null )
 		{
 			Id = id;
 			Parent = parent;
 			ElementFlags = inputState;
 			ScreenBounds = screenBounds;
+			Children = children;
 		}
 
 		public bool IsWindow => Parent is null;
 		public int Id { get; set; }
 		public BoundsElement Parent { get; set; }
+		public List<int> Children { get; set; }
 		public ElementFlags ElementFlags { get; set; }
 		public Rect ScreenBounds { get; set; }
 
@@ -50,14 +53,17 @@ internal class BoundsList
 			if ( element is null )
 				return null;
 
-			return new( element.Id, parent, default, element.ScreenRect );
+			var children = element
+				.Children
+				.Select( c => c.Id )
+				.ToList();
+			return new( element.Id, parent, default, element.ScreenRect, children );
 		}
 	}
 
 	private Dictionary<int, BoundsElement> Elements { get; set; } = new();
 	private List<BoundsElement> RootElements { get; set; } = new();
 	public IEnumerable<BoundsElement> GetRootElements() => RootElements;
-
 
 	public bool HasId( int id ) => Elements.ContainsKey( id );
 
@@ -122,6 +128,43 @@ internal class BoundsList
 		return false;
 	}
 
+	public int? TraceElement( Vector2 screenPos )
+	{
+		var windowId = TraceWindow( screenPos );
+		if ( windowId is null )
+			return null;
+
+		var windowElement = Elements[windowId.Value];
+		return Trace( screenPos, windowElement );
+	}
+
+	public int? TraceWindow( Vector2 screenPos )
+	{
+		for ( int i = RootElements.Count - 1; i > -1; i-- )
+		{
+			var window = RootElements[i];
+			if ( window.ScreenBounds.IsInside( screenPos ) )
+				return window.Id;
+		}
+		return null;
+	}
+
+	private int? Trace( Vector2 screenPosition, BoundsElement element )
+	{
+		if ( !element.ScreenBounds.IsInside( screenPosition ) )
+			return null;
+
+		foreach( var childId in element.Children )
+		{
+			var childElement = Elements[childId];
+			var result = Trace( screenPosition, childElement );
+			if ( result is not null )
+				return result;
+		}
+		// No children contain this point, so this element is the one we hit.
+		return element.Id;
+	}
+
 	private bool IsWindowVisible( BoundsElement bounds )
 	{
 		foreach ( var otherWindow in RootElements )
@@ -180,6 +223,12 @@ internal class BoundsList
 				return;
 			}
 		}
+		return;
+		//Log.Info( $"Printing Window Order" );
+		//for ( int i = 0; i < RootElements.Count; i++ )
+		//{
+		//	Log.Info( $"{i}: {RootElements[i].Id}" );
+		//}
 	}
 
 	public void ApplyElementFlags()

@@ -40,6 +40,12 @@ public class IdStack
 		}
 	}
 
+	public void Clear()
+	{
+		_data.Clear();
+		_hashes.Clear();
+	}
+
 	public int GetHash( string id ) => HashCode.Combine( GetSeed(), id );
 	public int GetHash( int id ) => HashCode.Combine( GetSeed(), id );
 	private int GetHash( HashData id ) => HashCode.Combine( GetSeed(), id.GetHashCode() );

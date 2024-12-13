@@ -15,6 +15,7 @@ internal partial class ImGuiSystem : GameObjectSystem<ImGuiSystem>
 		if ( !Game.IsPlaying )
 			return;
 
+		SwapBounds();
 		ClearElements();
 		UpdateTargetCamera();
 		InitializeInput();

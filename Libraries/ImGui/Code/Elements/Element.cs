@@ -7,6 +7,15 @@ public abstract class Element
 	protected Element( Element parent )
 	{
 		Parent = parent;
+		if ( Parent is null )
+		{
+			Window = this as Window;
+		}
+		else
+		{
+			Window = Parent.Window;
+		}
+
 		if ( Id == 0 )
 		{
 			var typeId = GetType().GetHashCode();
@@ -19,17 +28,8 @@ public abstract class Element
 	public int Id { get; init; }
 
 	#region Layout
-	public Element Parent { get; set; }
-	public Window Window
-	{
-		get
-		{
-			if ( Parent is null )
-				return this as Window;
-
-			return Parent.Window;
-		}
-	}
+	public Element Parent { get; init; }
+	public Window Window { get; init; }
 
 	public IReadOnlyList<Element> Children => _children;
 	protected List<Element> _children = new();
@@ -178,12 +178,12 @@ public abstract class Element
 		UpdateInput();
 	}
 
+	// TODO: Replace this with AddToParent
 	public virtual void AddChild( Element child )
 	{
-		if ( child is null )
+		if ( child is null || child.Parent != this )
 			return;
 
-		child.Parent = this;
 		child.Position = CursorPosition;
 		_children.Add( child );
 		var spacing = ImGui.GetStyle().ItemSpacing.y;
@@ -195,7 +195,7 @@ public abstract class Element
 	{
 		IsHovered = false;
 
-		if ( Parent is not null && !Parent.PreviousInputState.IsHovered() )
+		if ( Window is not null && System.PreviousHoveredWindowId != Window.Id )
 			return;
 
 		if ( !IsVisible )
