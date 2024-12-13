@@ -16,14 +16,6 @@ internal class ButtonWidget : Element
 	}
 
 	public string Label { get; set; }
-	public bool IsReleased { get; set; }
-
-	public override void UpdateInput()
-	{
-		base.UpdateInput();
-
-		IsReleased = PreviousInputState.HasFlag( ElementFlags.IsActive ) && MouseState.LeftClickReleased;
-	}
 
 	protected override void DrawSelf( ImDrawList drawList )
 	{

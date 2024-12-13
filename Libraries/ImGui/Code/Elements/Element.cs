@@ -163,6 +163,7 @@ public abstract class Element
 	}
 	public bool IsHovered { get; set; }
 	public bool IsDragged { get; set; }
+	public bool IsReleased { get; set; }
 	#endregion
 
 	#region History
@@ -183,6 +184,7 @@ public abstract class Element
 		PreviousInputState = System.PreviousBoundsList.GetElementFlags( Id );
 		IsAppearing = !System.PreviousBoundsList.HasId( Id );
 		IsVisible = PreviousInputState.IsVisible();
+		IsReleased = PreviousInputState.IsHovered() && PreviousInputState.HasFlag( ElementFlags.IsActive ) && MouseState.LeftClickReleased;
 		ImGui.NewLine();
 	}
 
