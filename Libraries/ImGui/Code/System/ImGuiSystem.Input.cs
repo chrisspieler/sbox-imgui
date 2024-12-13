@@ -102,7 +102,7 @@ internal partial class ImGuiSystem
 	{
 		if ( !MouseState.LeftClickDown )
 		{
-			ClickedElementId = 0;
+			ClickedElementId = null;
 		}
 		MouseState.LeftClickPressed = false;
 		MouseState.LeftClickReleased = false;

@@ -19,7 +19,6 @@ public abstract class Element
 	public int Id { get; init; }
 
 	#region Layout
-
 	public Element Parent { get; set; }
 	public Window Window
 	{
@@ -47,6 +46,55 @@ public abstract class Element
 	}
 	public Vector2 CursorStartPosition { get; set; }
 	public Vector2 CursorPosition { get; set; }
+
+	internal Element FindAncestor( int id )
+	{
+		if ( Parent is null )
+			return null;
+
+		if ( Parent.Id == id )
+			return Parent;
+
+		return Parent.FindAncestor( id );
+	}
+
+	internal Element FindDescendant( int id )
+	{
+		if ( _children.Count < 1 )
+			return null;
+
+		foreach( var child in _children )
+		{
+			if ( child.Id == id )
+				return child;
+		}
+		foreach( var child in _children )
+		{
+			var found = child.FindDescendant( id );
+			if ( found is not null )
+				return found;
+		}
+		return null;
+	}
+
+	public bool IsAncestor( Element element )
+	{
+		if ( element is null || Parent is null || element == this )
+			return false;
+
+		if ( Parent == element )
+			return true;
+
+		return Parent.IsAncestor( element );
+	}
+
+	public bool IsDescendant( Element element )
+	{
+		if ( element is null || element == this )
+			return false;
+
+		return element.IsAncestor( this );
+	}
 	#endregion
 
 	#region Transform
@@ -106,12 +154,12 @@ public abstract class Element
 	#endregion
 
 	/// <summary>
-	/// Adds this element to the current BoundsList, sets its Parent, updates its input data, and calls ImGui.NewLine.
+	/// Add this element to its Parent, updates its input data, and calls ImGui.NewLine.
 	/// <br/><br/>
-	/// For any subclass of Element, Initialize should be called either at the end of the constructor, or
+	/// For any subclass of Element, OnBegin should be called within its constructor, or
 	/// immediately after the element is constructed.
 	/// </summary>
-	public virtual void Begin()
+	public virtual void OnBegin()
 	{
 		Parent?.AddChild( this );
 		PreviousInputState = System.PreviousBoundsList.GetElementFlags( Id );
@@ -120,7 +168,11 @@ public abstract class Element
 		ImGui.NewLine();
 	}
 
-	public virtual void End()
+	/// <summary>
+	/// For any subclass of Element that contains no children, OnEnd should be called
+	/// immediately after OnBegin.
+	/// </summary>
+	public virtual void OnEnd()
 	{
 		// Only after all children are added will we know what this item's bounds are.
 		UpdateInput();
@@ -161,9 +213,17 @@ public abstract class Element
 
 	public virtual void Click( Vector2 screenPos )
 	{
-		ImGuiSystem.Current.ClickedElementId = Id;
+		if ( System.ClickedElementId.HasValue )
+		{
+			// Items won't be indexed in the BoundsList until the containing window is built.
+			var clickedDescendant = FindDescendant( System.ClickedElementId.Value );
+			// Within a frame, clicks should prioritize descendants over ancestors.
+			if ( clickedDescendant is not null )
+				return;
+		}
+
+		System.ClickedElementId = Id;
 		System.Focus( this );
-		Log.Info( $"Clicked {GetType().Name} # {Id}" );
 	}
 
 	protected virtual void DrawSelf( ImDrawList drawList ) { }
@@ -175,5 +235,10 @@ public abstract class Element
 		{
 			child.Draw( drawList );
 		}
+	}
+
+	public override string ToString()
+	{
+		return $"({GetType().Name} # {Id})";
 	}
 }

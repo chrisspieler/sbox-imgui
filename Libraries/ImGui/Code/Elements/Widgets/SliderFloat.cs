@@ -18,8 +18,8 @@ internal class SliderFloat : Element
 
 		Size = new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
 
-		Begin();
-		End();
+		OnBegin();
+		OnEnd();
 	}
 
 	public string Label { get; set; }

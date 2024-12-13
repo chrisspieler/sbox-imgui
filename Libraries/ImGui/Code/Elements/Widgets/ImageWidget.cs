@@ -17,8 +17,8 @@ internal class ImageWidget : Element
 
 		Size = ImageSize;
 
-		Begin();
-		End();
+		OnBegin();
+		OnEnd();
     }
 
 	public Texture ColorTexture { get; set; }

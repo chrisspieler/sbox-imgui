@@ -10,8 +10,8 @@ internal class TextWidget : Element
 
 		Size = ImGui.CalcTextSize( Text );
 
-		Begin();
-		End();
+		OnBegin();
+		OnEnd();
 	}
 
 	public string Text { get; set; }

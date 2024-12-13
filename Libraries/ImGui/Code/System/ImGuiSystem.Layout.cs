@@ -33,7 +33,7 @@ internal partial class ImGuiSystem
 
 	public int? FocusedWindowId { get; private set; }
 	public int? FocusedElementId { get; private set; }
-	public int ClickedElementId { get; set; }
+	public int? ClickedElementId { get; set; }
 
 	private void AddElement( Element element )
 	{
@@ -45,7 +45,11 @@ internal partial class ImGuiSystem
 		CurrentBoundsList.AddElement( element, element.Parent );
 	}
 
-	internal Element GetElement( int id ) => CurrentElements[id];
+	internal Element GetElement( int id )
+	{
+		CurrentElements.TryGetValue( id, out var element );
+		return element;
+	}
 
 	public void Focus( Element element )
 	{
@@ -110,7 +114,7 @@ internal partial class ImGuiSystem
 
 		var popped = WindowStack.Pop();
 		IdStack.Pop();
-		popped.End();
+		popped.OnEnd();
 		if ( WindowStack.Count > 0 && popped.Id == FocusedWindowId )
 		{
 			// TODO: Create a focus stack separate from draw order.

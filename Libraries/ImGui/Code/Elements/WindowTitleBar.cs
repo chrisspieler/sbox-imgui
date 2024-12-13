@@ -10,7 +10,7 @@ internal class WindowTitleBar : Element
 
 		TitleTextSize = ImGui.CalcTextSize( TitleText ) + ImGui.GetStyle().FramePadding * 2;
 
-		Begin();
+		OnBegin();
 	}
 	public static Color32 TitleActiveColor => ImGui.GetColorU32( ImGuiCol.TitleBgActive );
 	public static Color32 TitleInactiveColor => ImGui.GetColorU32( ImGuiCol.TitleBg );

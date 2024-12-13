@@ -20,7 +20,7 @@ public class Window : Element
 		CursorPosition = ImGui.GetStyle().WindowPadding;
 		CursorStartPosition = CursorPosition;
 
-		Begin();
+		OnBegin();
 	}
 
 	public string Name { get; init; }

@@ -11,8 +11,8 @@ internal class ButtonWidget : Element
 
 		Size = ImGui.CalcTextSize( Label ) + ImGui.GetStyle().FramePadding;
 
-		Begin();
-		End();
+		OnBegin();
+		OnEnd();
 	}
 
 	public string Label { get; set; }
@@ -22,7 +22,7 @@ internal class ButtonWidget : Element
 	{
 		base.UpdateInput();
 
-		IsReleased = PreviousInputState.HasFlag( ElementFlags.IsActive ) && !MouseState.LeftClickDown;
+		IsReleased = PreviousInputState.HasFlag( ElementFlags.IsActive ) && MouseState.LeftClickReleased;
 	}
 
 	protected override void DrawSelf( ImDrawList drawList )
