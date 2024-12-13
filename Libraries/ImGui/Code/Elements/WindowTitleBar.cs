@@ -27,7 +27,7 @@ internal class WindowTitleBar : Element
 		Parent.IsDragged = IsActive && MouseState.LeftClickDragTotalDelta.Length > 5f;
 		if ( Parent.IsDragged && MouseState.LeftClickReleased )
 		{
-			System.CustomWindowPositions[Window.Id] = Window.Position;
+			SetCustomWindowPosition();
 		}
 	}
 
@@ -35,7 +35,14 @@ internal class WindowTitleBar : Element
 	{
 		base.OnClick( screenPos );
 
-		System.CustomWindowPositions[Window.Id] = Window.Position;
+		SetCustomWindowPosition();
+	}
+
+	private void SetCustomWindowPosition()
+	{
+		// Store the unscaled window position so that if the screen size changes,
+		// the window position remains the same relative to the corners of the screen.
+		System.CustomWindowPositions[Window.Id] = Window.Position * (1f / ImGuiStyle.UIScale);
 	}
 
 	protected override void OnDrawSelf( ImDrawList drawList )

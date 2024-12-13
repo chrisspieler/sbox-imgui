@@ -14,7 +14,9 @@ public class Window : Element
 		Position = screenPos;
 		if ( System.CustomWindowPositions.TryGetValue( Id, out var customPos ) )
 		{
-			Position = customPos;
+			// Window positions are stored unscaled in case screen size changes,
+			// so we need to scale them back up here.
+			Position = customPos * ImGuiStyle.UIScale;
 		}
 		Pivot = pivot;
 		Padding = ImGui.GetStyle().WindowPadding;
