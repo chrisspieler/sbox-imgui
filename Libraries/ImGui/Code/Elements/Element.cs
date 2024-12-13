@@ -99,7 +99,25 @@ public abstract class Element
 
 	#region Transform
 	public Vector2 Pivot { get; set; }
-	public Vector2 Position { get; set; }
+	public Vector2 Position 
+	{ 
+		get
+		{
+			var pos = _position;
+			if ( IsDragged )
+			{
+				pos += MouseState.LeftClickDragTotalDelta;
+			}
+			return pos;
+		}
+		set
+		{
+			var pos = value;
+			pos -= Size * Pivot;
+			_position = pos;
+		}
+	}
+	private Vector2 _position;
 	public virtual Vector2 ScreenPosition
 	{
 		get
@@ -207,11 +225,11 @@ public abstract class Element
 		IsHovered = true;
 		if ( MouseState.LeftClickPressed )
 		{
-			Click( MouseState.Position );
+			OnClick( MouseState.Position );
 		}
 	}
 
-	public virtual void Click( Vector2 screenPos )
+	public virtual void OnClick( Vector2 screenPos )
 	{
 		if ( System.ClickedElementId.HasValue )
 		{

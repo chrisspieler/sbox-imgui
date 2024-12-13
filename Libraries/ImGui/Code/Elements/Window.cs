@@ -12,6 +12,10 @@ public class Window : Element
 		Id = ImGui.GetID( Name );
 		WindowFlags = flags;
 		Position = screenPos;
+		if ( System.CustomWindowPositions.TryGetValue( Id, out var customPos ) )
+		{
+			Position = customPos;
+		}
 		Pivot = pivot;
 		Padding = ImGui.GetStyle().WindowPadding;
 		CustomSize = size;
@@ -29,8 +33,17 @@ public class Window : Element
 
 	public Action OnClose { get; set; }
 
+	internal WindowTitleBar TitleBar { get; set; }
+
 	public static Color32 BackgroundColor => ImGui.GetColorU32( ImGuiCol.WindowBg );
 	public static Color32 BorderColor => ImGui.GetColorU32( ImGuiCol.Border );
+
+	public override void OnEnd()
+	{
+		base.OnEnd();
+
+		TitleBar?.OnEnd();
+	}
 
 	protected override void DrawSelf( ImDrawList drawList )
 	{

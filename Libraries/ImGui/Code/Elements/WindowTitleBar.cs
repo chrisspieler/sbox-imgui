@@ -24,14 +24,18 @@ internal class WindowTitleBar : Element
 	public override void UpdateInput()
 	{
 		base.UpdateInput();
-		Parent.IsDragged = IsActive;
-		if ( IsActive )
+		Parent.IsDragged = IsActive && MouseState.LeftClickDragTotalDelta.Length > 5f;
+		if ( Parent.IsDragged && MouseState.LeftClickReleased )
 		{
-			if ( MouseState.LeftClickPressed || MouseState.LeftClickReleased )
-			{
-				ImGuiSystem.Current.CustomWindowPositions[Parent.Id] = Parent.ScreenRect.Position;
-			}
+			System.CustomWindowPositions[Window.Id] = Window.Position;
 		}
+	}
+
+	public override void OnClick( Vector2 screenPos )
+	{
+		base.OnClick( screenPos );
+
+		System.CustomWindowPositions[Window.Id] = Window.Position;
 	}
 
 	protected override void DrawSelf( ImDrawList drawList )

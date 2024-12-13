@@ -97,7 +97,7 @@ internal partial class ImGuiSystem
 		if ( !flags.HasFlag( ImGuiWindowFlags.NoTitleBar ) )
 		{
 			nextWindow.CursorPosition = Vector2.Zero;
-			_ = new WindowTitleBar( nextWindow );
+			nextWindow.TitleBar = new WindowTitleBar( nextWindow );
 			ImGui.NewLine();
 			nextWindow.CursorPosition += Style.WindowPadding;
 			nextWindow.CursorStartPosition = nextWindow.CursorPosition;
