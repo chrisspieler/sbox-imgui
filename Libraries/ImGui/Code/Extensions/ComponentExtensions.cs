@@ -72,9 +72,9 @@ public static class ComponentExtensions
 	private static void ImGuiSliderFloatProperty( Component component, PropertyDescription prop, float min, float max )
 	{
 		ImGui.Text( prop.Name ); ImGui.SameLine();
-		Func<float> getter = () => (float)prop.GetValue( component );
+		var value = (float)prop.GetValue( component );
 		Action<float> setter = v => prop.SetValue( component, v );
-		ImGui.SliderFloat( prop.Name, getter, setter, min, max, "F3" );
+		ImGui.SliderFloat( prop.Name, value, setter, min, max, "F3" );
 	}
 
 	private static void ImGuiIntProperty( Component component, PropertyDescription prop )

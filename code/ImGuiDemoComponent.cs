@@ -36,7 +36,7 @@ public class ImGuiDemo : Component
 		{
 			_shouldFocusFloatingWindow = true;
 		}
-		ImGui.SliderFloat( "My Float", () => _myFloatValue, v => _myFloatValue = v, -128f, 256f );
+		ImGui.SliderFloat( "My Float", _myFloatValue, v => _myFloatValue = v, -128f, 256f );
 		ImGui.Button( "1" ); ImGui.SameLine();
 		ImGui.Button( "2" ); ImGui.SameLine();
 		ImGui.Button( "3" ); ImGui.SameLine();

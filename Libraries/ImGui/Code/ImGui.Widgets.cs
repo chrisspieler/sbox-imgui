@@ -35,9 +35,10 @@ public static partial class ImGui
 		return true;
 	}
 
-	public static bool SliderFloat( string label, Func<float> getter, Action<float> setter, float min, float max, string format = null, ImGuiSliderFlags flags = default )
+	public static bool SliderFloat( string label, float value, Action<float> setter, float min, float max, string format = null, ImGuiSliderFlags flags = default )
 	{
-		_ = new SliderFloat( CurrentWindow, label, getter, setter, min, max, format );
+		_ = new SliderBar<float>( CurrentWindow, 0, value, setter, min, max, format );
+		//_ = new SliderFloat( CurrentWindow, label, getter, setter, min, max, format );
 		return true;
 	}
 
