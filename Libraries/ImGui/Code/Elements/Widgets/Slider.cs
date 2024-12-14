@@ -58,23 +58,24 @@ public class SliderBar<T> : Element where T : INumber<T>
 
 	private static T Lerp( T from, T to, float frac, bool clamp = true )
 	{
-		T fracT = clamp
-			? T.CreateSaturating( frac )
-			: T.CreateTruncating( frac );
-
-		return from + fracT * (to - from);
-	}
-
-	private static float LerpInverse( T value, T from, T to, bool clamp = true )
-	{
 		if ( clamp )
 		{
-			value = T.CreateSaturating( value );
+			frac = frac.Clamp( 0f, 1f );
 		}
 
-		value -= from;
-		to -= from;
-		return float.CreateTruncating( value / to );
+		var fromF = float.CreateTruncating( from );
+		var toF = float.CreateTruncating( to );
+		return T.CreateTruncating( fromF + frac * (toF - fromF) );
+	}
+
+	private static float LerpInverse( T value, T from, T to )
+	{
+		var valueF = float.CreateTruncating( value );
+		var fromF = float.CreateTruncating( from );
+		var toF = float.CreateTruncating( to );
+		valueF -= fromF;
+		toF -= fromF;
+		return valueF / toF;
 	}
 
 	protected Color32 GrabColor

@@ -82,12 +82,20 @@ public static class ComponentExtensions
 		var range = prop.GetCustomAttribute<RangeAttribute>();
 		if ( range is not null )
 		{
-			// TODO: Draw SliderInt
+			ImGuiSliderIntProperty( component, prop, (int)range.Min, (int)range.Max );
 		}
 		else
 		{
 			ImGuiDragIntProperty( component, prop );
 		}
+	}
+
+	private static void ImGuiSliderIntProperty( Component component, PropertyDescription prop, int min, int max )
+	{
+		ImGui.Text( prop.Name ); ImGui.SameLine();
+		var value = (int)prop.GetValue( component );
+		Action<int> setter = v => prop.SetValue( component, v );
+		ImGui.SliderInt( prop.Name, value, setter, min, max );
 	}
 
 	private static void ImGuiDragIntProperty( Component component, PropertyDescription prop )

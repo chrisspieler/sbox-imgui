@@ -35,13 +35,17 @@ public static partial class ImGui
 		return true;
 	}
 
-	public static bool SliderFloat( string label, float value, Action<float> setter, float min, float max, string format = null, ImGuiSliderFlags flags = default )
+	public static bool SliderFloat( string label, float value, Action<float> setter, float min, float max, string format = null, ImGuiSliderFlags flags = 0 )
 	{
 		_ = new SliderBar<float>( CurrentWindow, 0, value, setter, min, max, format );
-		//_ = new SliderFloat( CurrentWindow, label, getter, setter, min, max, format );
 		return true;
 	}
 
+	public static bool SliderInt( string label, int value, Action<int> setter, int min, int max, string format = null, ImGuiSliderFlags flags = 0 )
+	{
+		_ = new SliderBar<int>( CurrentWindow, 0, value, setter, min, max, format );
+		return true;
+	}
 
 	public static void Image( Texture texture, Vector2 size, Color tintColor, Color borderColor )
 	{
