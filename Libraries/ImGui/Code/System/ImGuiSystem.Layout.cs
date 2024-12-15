@@ -144,7 +144,7 @@ internal partial class ImGuiSystem
 		AddElement( element );
 		foreach( var child in element.Children )
 		{
-			AddElement( child );
+			AddElementRecursive( child );
 		}
 	}
 }

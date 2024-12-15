@@ -37,7 +37,9 @@ public static partial class ImGui
 
 	public static bool SliderFloat( string label, ref float value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )
 	{
-		_ = new SliderBar<float>( CurrentWindow, 0, ref value, min, max, format );
+		var components = new float[1] { value };
+		_ = new Slider<float>( CurrentWindow, label, ref components, min, max, format );
+		value = components[0];
 		return true;
 	}
 
@@ -58,7 +60,9 @@ public static partial class ImGui
 
 	public static bool SliderInt( string label, ref int value, int min, int max, string format = null, ImGuiSliderFlags flags = 0 )
 	{
-		_ = new SliderBar<int>( CurrentWindow, 0, ref value, min, max, format );
+		var components = new int[1] { value };
+		_ = new Slider<int>( CurrentWindow, label, ref components, min, max, format );
+		value = components[0];
 		return true;
 	}
 

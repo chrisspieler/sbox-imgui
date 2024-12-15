@@ -1,117 +1,121 @@
 ﻿using Duccsoft.ImGui.Rendering;
-using System;
 using System.Numerics;
 
 namespace Duccsoft.ImGui.Elements;
 
 public class Slider<T> : Element where T : INumber<T>
 {
-	public Slider( Element parent, string label, ref T value, T min, T max, string format, int componentCount ) 
+	public Slider( Element parent, string label, ref T[] components, T min, T max, string format ) 
 		: base( parent )
 	{
+		Label = label;
+
 		OnBegin();
-		for ( int i = 0; i < componentCount; i++ )
+		for ( int i = 0; i < components.Length; i++ )
 		{
 			ImGui.PushID( i );
-			_ = new SliderBar<T>( this, i, ref value, min, max, format );
-			ImGui.SameLine();
+			_ = new SliderBar( this, ref components[i], min, max, format );
+			if ( i > 0 && i < components.Length - 1 )
+			{
+				ImGui.SameLine();
+			}
 			ImGui.PopID();
 		}
 		OnEnd();
 	}
-}
 
-public class SliderBar<T> : Element where T : INumber<T>
-{
-	public SliderBar( Element parent, int index, ref T value, T min, T max, string format ) 
-		: base( parent )
+	public string Label { get; set; }
+
+	private class SliderBar : Element
 	{
-		Index = index;
-		Value = value;
-		Min = min;
-		Max = max;
-		Format = format;
-
-		Size = new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
-
-		OnBegin();
-		OnEnd();
-
-		value = Value;
-	}
-
-	public int Index { get; init; }
-	public T Value { get; set; }
-	public T Min { get; init; }
-	public T Max { get; init; }
-	public string Format { get; init; }
-
-	protected float ValueProgress
-	{
-		get => LerpInverse( Value, Min, Max );
-		set
+		public SliderBar( Element parent, ref T value, T min, T max, string format )
+			: base( parent )
 		{
-			Value = Lerp( Min, Max, value );
-		}
-	}
+			Value = value;
+			Min = min;
+			Max = max;
+			Format = format;
 
-	private static T Lerp( T from, T to, float frac, bool clamp = true )
-	{
-		if ( clamp )
-		{
-			frac = frac.Clamp( 0f, 1f );
+			Size = new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
+
+			OnBegin();
+			OnEnd();
+
+			value = Value;
 		}
 
-		var fromF = float.CreateTruncating( from );
-		var toF = float.CreateTruncating( to );
-		return T.CreateTruncating( fromF + frac * (toF - fromF) );
-	}
+		public T Value { get; set; }
+		public T Min { get; init; }
+		public T Max { get; init; }
+		public string Format { get; init; }
 
-	private static float LerpInverse( T value, T from, T to )
-	{
-		var valueF = float.CreateTruncating( value );
-		var fromF = float.CreateTruncating( from );
-		var toF = float.CreateTruncating( to );
-		valueF -= fromF;
-		toF -= fromF;
-		return valueF / toF;
-	}
-
-	protected Color32 GrabColor
-	{
-		get
+		protected float ValueProgress
 		{
-			return IsActive
-				? ImGui.GetColorU32( ImGuiCol.SliderGrabActive )
-				: ImGui.GetColorU32( ImGuiCol.SliderGrab );
+			get => LerpInverse( Value, Min, Max );
+			set
+			{
+				Value = Lerp( Min, Max, value );
+			}
 		}
-	}
 
-	public override void OnUpdateInput()
-	{
-		base.OnUpdateInput();
-
-		if ( IsActive )
+		private static T Lerp( T from, T to, float frac, bool clamp = true )
 		{
-			var xPosMin = ScreenPosition.x;
-			var xPosMax = ScreenPosition.x + Size.x;
-			ValueProgress = MathX.LerpInverse( ImGui.GetMousePos().x, xPosMin, xPosMax );
+			if ( clamp )
+			{
+				frac = frac.Clamp( 0f, 1f );
+			}
+
+			var fromF = float.CreateTruncating( from );
+			var toF = float.CreateTruncating( to );
+			return T.CreateTruncating( fromF + frac * (toF - fromF) );
 		}
-	}
 
-	protected override void OnDrawSelf( ImDrawList drawList )
-	{
-		var bgRect = new Rect( ScreenPosition, Size );
-		drawList.AddRectFilled( ScreenPosition, ScreenPosition + Size, FrameColor );
+		private static float LerpInverse( T value, T from, T to )
+		{
+			var valueF = float.CreateTruncating( value );
+			var fromF = float.CreateTruncating( from );
+			var toF = float.CreateTruncating( to );
+			valueF -= fromF;
+			toF -= fromF;
+			return valueF / toF;
+		}
 
-		var grabSize = new Vector2( Style.GrabMinSize, ImGui.GetFrameHeight() );
-		var xGrabPos = MathX.Lerp( 0f, bgRect.Size.x - grabSize.x, ValueProgress );
-		var grabPos = ScreenPosition + new Vector2( xGrabPos, Style.FramePadding.y * 0.5f );
-		drawList.AddRectFilled( grabPos, grabPos + grabSize, GrabColor );
+		protected Color32 GrabColor
+		{
+			get
+			{
+				return IsActive
+					? ImGui.GetColorU32( ImGuiCol.SliderGrabActive )
+					: ImGui.GetColorU32( ImGuiCol.SliderGrab );
+			}
+		}
 
-		var text = string.Format( "{0:" + Format + "}", Value );
-		var xOffsetText = bgRect.Size.x * 0.5f;
-		var textPos = ScreenPosition + new Vector2( xOffsetText, Style.FramePadding.y );
-		drawList.AddText( textPos, ImGui.GetColorU32( ImGuiCol.Text ), text );
+		public override void OnUpdateInput()
+		{
+			base.OnUpdateInput();
+
+			if ( IsActive )
+			{
+				var xPosMin = ScreenPosition.x;
+				var xPosMax = ScreenPosition.x + Size.x;
+				ValueProgress = MathX.LerpInverse( ImGui.GetMousePos().x, xPosMin, xPosMax );
+			}
+		}
+
+		protected override void OnDrawSelf( ImDrawList drawList )
+		{
+			var bgRect = new Rect( ScreenPosition, Size );
+			drawList.AddRectFilled( ScreenPosition, ScreenPosition + Size, FrameColor );
+
+			var grabSize = new Vector2( Style.GrabMinSize, ImGui.GetFrameHeight() );
+			var xGrabPos = MathX.Lerp( 0f, bgRect.Size.x - grabSize.x, ValueProgress );
+			var grabPos = ScreenPosition + new Vector2( xGrabPos, Style.FramePadding.y * 0.5f );
+			drawList.AddRectFilled( grabPos, grabPos + grabSize, GrabColor );
+
+			var text = string.Format( "{0:" + Format + "}", Value );
+			var xOffsetText = bgRect.Size.x * 0.5f;
+			var textPos = ScreenPosition + new Vector2( xOffsetText, Style.FramePadding.y );
+			drawList.AddText( textPos, ImGui.GetColorU32( ImGuiCol.Text ), text );
+		}
 	}
 }
