@@ -5,10 +5,16 @@ namespace Duccsoft.ImGui;
 
 public static partial class ImGui
 {
-	public static bool Begin( string name, Action onClose = null, ImGuiWindowFlags flags = default )
+	public static bool Begin( string name, ref bool open, ImGuiWindowFlags flags = default )
 	{
-		System.BeginWindow( name, onClose, flags );
+		System.BeginWindow( name, ref open, flags );
 		return true;
+	}
+
+	public static bool Begin( string name, ImGuiWindowFlags flags = default )
+	{
+		var open = true;
+		return Begin( name, ref open, flags );
 	}
 
 	// TODO: Allow windows to be collapsed.

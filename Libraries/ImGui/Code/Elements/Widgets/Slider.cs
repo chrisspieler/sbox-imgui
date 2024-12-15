@@ -6,14 +6,14 @@ namespace Duccsoft.ImGui.Elements;
 
 public class Slider<T> : Element where T : INumber<T>
 {
-	public Slider( Element parent, string label, T value, Action<T> setter, T min, T max, string format, int componentCount ) 
+	public Slider( Element parent, string label, ref T value, T min, T max, string format, int componentCount ) 
 		: base( parent )
 	{
 		OnBegin();
 		for ( int i = 0; i < componentCount; i++ )
 		{
 			ImGui.PushID( i );
-			_ = new SliderBar<T>( this, i, value, setter, min, max, format );
+			_ = new SliderBar<T>( this, i, ref value, min, max, format );
 			ImGui.SameLine();
 			ImGui.PopID();
 		}
@@ -23,12 +23,11 @@ public class Slider<T> : Element where T : INumber<T>
 
 public class SliderBar<T> : Element where T : INumber<T>
 {
-	public SliderBar( Element parent, int index, T value, Action<T> setter, T min, T max, string format ) 
+	public SliderBar( Element parent, int index, ref T value, T min, T max, string format ) 
 		: base( parent )
 	{
 		Index = index;
 		Value = value;
-		Setter = setter;
 		Min = min;
 		Max = max;
 		Format = format;
@@ -37,11 +36,12 @@ public class SliderBar<T> : Element where T : INumber<T>
 
 		OnBegin();
 		OnEnd();
+
+		value = Value;
 	}
 
 	public int Index { get; init; }
 	public T Value { get; set; }
-	public Action<T> Setter { get; init; }
 	public T Min { get; init; }
 	public T Max { get; init; }
 	public string Format { get; init; }
@@ -52,7 +52,6 @@ public class SliderBar<T> : Element where T : INumber<T>
 		set
 		{
 			Value = Lerp( Min, Max, value );
-			Setter?.Invoke( Value );
 		}
 	}
 

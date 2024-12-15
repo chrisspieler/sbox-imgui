@@ -5,13 +5,12 @@ namespace Duccsoft.ImGui.Elements;
 
 internal class DragInt : Element
 {
-	public DragInt( Window parent, string label, Func<int> getter, Action<int> setter,
-		float speed, int minValue, int maxValue, string format, ImGuiSliderFlags flags ) 
+	public DragInt( Window parent, string label, ref int value, float speed, 
+		int minValue, int maxValue, string format, ImGuiSliderFlags flags ) 
 		: base( parent )
 	{
 		Label = label;
-		ValueGetter = getter;
-		ValueSetter = setter;
+		Value = value;
 		Speed = speed;
 		MinValue = minValue;
 		MaxValue = maxValue;
@@ -22,14 +21,12 @@ internal class DragInt : Element
 
 		OnBegin();
 		OnEnd();
+
+		value = Value;
 	}
 
 	public string Label { get; set; }
-	public int Value
-	{
-		get => ValueGetter.Invoke();
-		set => ValueSetter.Invoke( value );
-	}
+	public int Value { get; set; }
 	public Func<int> ValueGetter { get; set; }
 	public Action<int> ValueSetter { get; set; }
 	public float Speed { get; set; }

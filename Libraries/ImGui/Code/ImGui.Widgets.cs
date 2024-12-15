@@ -22,28 +22,43 @@ public static partial class ImGui
 		return button.IsReleased;
 	}
 
-	public static bool Checkbox( string label, bool value, Action<bool> valueChanged )
+	public static bool Checkbox( string label, ref bool value )
 	{
-		var checkbox = new Checkbox( CurrentWindow, label, value, valueChanged );
+		var checkbox = new Checkbox( CurrentWindow, label, ref value );
 		return checkbox.IsReleased;
 	}
 
-	public static bool DragInt( string label, Func<int> getter, Action<int> setter, float speed = 1.0f, int min = 0, int max = 0, string format = null, ImGuiSliderFlags flags = 0 )
+	public static bool DragInt( string label, ref int value, float speed = 1.0f, int min = 0, int max = 0, string format = null, ImGuiSliderFlags flags = 0 )
 	{
-		_ = new DragInt( CurrentWindow, label, getter, setter, speed, min, max, format, flags );
+		_ = new DragInt( CurrentWindow, label, ref value, speed, min, max, format, flags );
 		// TODO: Is returning true correct?
 		return true;
 	}
 
-	public static bool SliderFloat( string label, float value, Action<float> setter, float min, float max, string format = null, ImGuiSliderFlags flags = 0 )
+	public static bool SliderFloat( string label, ref float value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )
 	{
-		_ = new SliderBar<float>( CurrentWindow, 0, value, setter, min, max, format );
+		_ = new SliderBar<float>( CurrentWindow, 0, ref value, min, max, format );
 		return true;
 	}
 
-	public static bool SliderInt( string label, int value, Action<int> setter, int min, int max, string format = null, ImGuiSliderFlags flags = 0 )
+	public static bool SliderFloat2( string label, ref Vector2 value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )
 	{
-		_ = new SliderBar<int>( CurrentWindow, 0, value, setter, min, max, format );
+		throw new NotImplementedException();
+	}
+
+	public static bool SliderFloat3( string label, ref Vector3 value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )
+	{
+		throw new NotImplementedException();
+	}
+
+	public static bool SliderFloat4( string label, ref Vector4 value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )
+	{
+		throw new NotImplementedException();
+	}
+
+	public static bool SliderInt( string label, ref int value, int min, int max, string format = null, ImGuiSliderFlags flags = 0 )
+	{
+		_ = new SliderBar<int>( CurrentWindow, 0, ref value, min, max, format );
 		return true;
 	}
 

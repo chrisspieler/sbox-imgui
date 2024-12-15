@@ -87,7 +87,7 @@ internal partial class ImGuiSystem
 		CurrentBoundsList.SortWindows();
 	}
 
-	public void BeginWindow( string name, Action onClose, ImGuiWindowFlags flags )
+	public void BeginWindow( string name, ref bool open, ImGuiWindowFlags flags )
 	{
 		// TODO: Move this method in to Window.Begin()
 
@@ -95,7 +95,7 @@ internal partial class ImGuiSystem
 		{
 			NextWindowPosition = customPos;
 		}
-		var nextWindow = new Window( name, NextWindowPosition, NextWindowPivot, NextWindowSize, flags );
+		var nextWindow = new Window( name, ref open, NextWindowPosition, NextWindowPivot, NextWindowSize, flags );
 		if ( !flags.HasFlag( ImGuiWindowFlags.NoTitleBar ) )
 		{
 			nextWindow.CursorPosition = Vector2.Zero;

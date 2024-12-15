@@ -5,19 +5,19 @@ namespace Duccsoft.ImGui.Elements;
 
 public class Checkbox : Element
 {
-	public Checkbox( Element parent, string label, bool isChecked, Action<bool> valueChanged ) : base( parent )
+	public Checkbox( Element parent, string label, ref bool isChecked ) : base( parent )
 	{
-		ValueChanged = valueChanged;
 		Checked = isChecked;
 		Label = label;
 
 		OnBegin();
 		OnEnd();
+
+		isChecked = Checked;
 	}
 
 	public string Label { get; set; }
 	public bool Checked { get; set; }
-	public Action<bool> ValueChanged { get; set; }
 
 	private Color32 CheckMarkColor => ImGui.GetColorU32( ImGuiCol.CheckMark );
 
@@ -49,7 +49,6 @@ public class Checkbox : Element
 		if ( IsReleased )
 		{
 			Checked = !Checked;
-			ValueChanged?.Invoke( Checked );
 		}
 	}
 

@@ -73,8 +73,8 @@ public static class ComponentExtensions
 	{
 		ImGui.Text( prop.Name ); ImGui.SameLine();
 		var value = (float)prop.GetValue( component );
-		Action<float> setter = v => prop.SetValue( component, v );
-		ImGui.SliderFloat( prop.Name, value, setter, min, max, "F3" );
+		ImGui.SliderFloat( prop.Name, ref value, min, max, "F3" );
+		prop.SetValue( component, value );
 	}
 
 	private static void ImGuiIntProperty( Component component, PropertyDescription prop )
@@ -94,21 +94,22 @@ public static class ComponentExtensions
 	{
 		ImGui.Text( prop.Name ); ImGui.SameLine();
 		var value = (int)prop.GetValue( component );
-		Action<int> setter = v => prop.SetValue( component, v );
-		ImGui.SliderInt( prop.Name, value, setter, min, max );
+		ImGui.SliderInt( prop.Name, ref value, min, max );
+		prop.SetValue( component, value );
 	}
 
 	private static void ImGuiDragIntProperty( Component component, PropertyDescription prop )
 	{
 		ImGui.Text( prop.Name ); ImGui.SameLine();
-		Func<int> getter = () => (int)prop.GetValue( component );
-		Action<int> setter = v => prop.SetValue( component, v );
-		ImGui.DragInt( prop.Name, getter, setter, 0.2f );
+		var value = (int)prop.GetValue( component );
+		ImGui.DragInt( prop.Name, ref value, 0.2f );
+		prop.SetValue( component, value );
 	}
 
 	private static void ImGuiBoolProperty( Component component, PropertyDescription prop )
 	{
-		Action<bool> setter = v => prop.SetValue( component, v );
-		ImGui.Checkbox( prop.Name, (bool)prop.GetValue( component ), setter );
+		var value = (bool)prop.GetValue( component );
+		ImGui.Checkbox( prop.Name, ref value );
+		prop.SetValue( component, value );
 	}
 }

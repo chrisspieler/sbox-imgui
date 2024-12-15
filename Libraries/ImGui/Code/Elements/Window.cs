@@ -5,7 +5,7 @@ namespace Duccsoft.ImGui.Elements;
 
 public class Window : Element
 {
-	public Window( string name, Vector2 screenPos, Vector2 pivot, Vector2 size, ImGuiWindowFlags flags )
+	public Window( string name, ref bool open, Vector2 screenPos, Vector2 pivot, Vector2 size, ImGuiWindowFlags flags )
 		: base( null )
 	{
 		Name = name;
@@ -28,6 +28,8 @@ public class Window : Element
 		CursorStartPosition = CursorPosition;
 
 		OnBegin();
+
+		open = true;
 	}
 
 	public string Name { get; init; }
