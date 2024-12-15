@@ -9,6 +9,7 @@ public class Window : Element
 		: base( null )
 	{
 		Name = name;
+		DrawList = new ImDrawList( Name );
 		Id = ImGui.GetID( Name );
 		WindowFlags = flags;
 		Position = screenPos;
@@ -30,7 +31,7 @@ public class Window : Element
 	}
 
 	public string Name { get; init; }
-	public ImDrawList DrawList { get; set; } = new();
+	public ImDrawList DrawList { get; set; }
 	public ImGuiWindowFlags WindowFlags { get; init; }
 
 	public Action OnClose { get; set; }
@@ -45,6 +46,16 @@ public class Window : Element
 		base.OnEnd();
 
 		TitleBar?.OnEnd();
+		if ( System.TryGetDrawList( Id, out var drawList ) )
+		{
+			DrawList = drawList;
+			DrawList.CommandList.Reset();
+		}
+		else
+		{
+			DrawList = new ImDrawList( $"ImGui DrawList {Name}" );
+			System.AddDrawList( Id, DrawList );
+		}
 	}
 
 	protected override void OnDrawSelf( ImDrawList drawList )

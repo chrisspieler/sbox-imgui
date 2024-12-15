@@ -1,5 +1,6 @@
 ﻿using Duccsoft.ImGui.Elements;
-using System;
+using Duccsoft.ImGui.Rendering;
+using Sandbox.Rendering;
 using System.Linq;
 
 namespace Duccsoft.ImGui;
@@ -7,16 +8,14 @@ namespace Duccsoft.ImGui;
 internal partial class ImGuiSystem
 {
 	public bool UseSceneCamera { get; } = true;
+	public CommandList MainCommandList { get; } = new CommandList( "ImGui Main CommandList" );
 	private CameraComponent TargetCamera { get; set; }
-
-	private IDisposable _uiRenderHook;
 
 	private void UpdateTargetCamera()
 	{
 		if ( !UseSceneCamera )
 		{
-			_uiRenderHook?.Dispose();
-			_uiRenderHook = null;
+			TargetCamera?.RemoveCommandList( MainCommandList );
 			TargetCamera = null;
 			return;
 		}
@@ -31,23 +30,38 @@ internal partial class ImGuiSystem
 		// If the old camera is still valid, but we're switching away from it.
 		if ( isTargetValid )
 		{
-			_uiRenderHook?.Dispose();
-			_uiRenderHook = null;
+			TargetCamera?.RemoveCommandList( MainCommandList );
 		}
 
+		// We are switching to a new camera for the first time.
 		if ( sceneCamera.IsValid() )
 		{
 			TargetCamera = sceneCamera;
-			_uiRenderHook?.Dispose();
-			_uiRenderHook = null;
-			_uiRenderHook = TargetCamera.AddHookAfterTransparent( "ImDrawList Rendering", 10_000, Render );
+			TargetCamera.AddCommandList( MainCommandList, Sandbox.Rendering.Stage.AfterUI, 10_000 );
 		}
 	}
+
+	private void RemoveExpiredDrawLists()
+	{
+		foreach ( (int id, _ ) in DrawLists.ToList() )
+		{
+			if ( !CurrentElements.ContainsKey( id ) )
+			{
+				RemoveDrawList( id );
+			}
+		}
+	}
+
+	public bool TryGetDrawList( int id, out ImDrawList drawList ) => DrawLists.TryGetValue( id, out drawList );
+	public bool RemoveDrawList( int id ) => DrawLists.Remove( id );
+	public void AddDrawList( int id, ImDrawList drawList ) => DrawLists[id] = drawList;
 
 	private void BuildDrawLists()
 	{
 		if ( !Game.IsPlaying )
 			return;
+
+		MainCommandList.Reset();
 
 		void DrawWindow( int? id )
 		{
@@ -56,6 +70,7 @@ internal partial class ImGuiSystem
 
 			var currentWindow = GetElement( id.Value ) as Window;
 			currentWindow.Draw( currentWindow.DrawList );
+			MainCommandList.InsertList( currentWindow.DrawList.CommandList );
 		}
 
 		int? focusedWindow = null;
@@ -70,27 +85,5 @@ internal partial class ImGuiSystem
 		}
 		// Draw the focused window on top of everything else.
 		DrawWindow( focusedWindow );
-	}
-
-	private void Render( SceneCamera camera )
-	{
-		if ( !Game.IsPlaying )
-			return;
-
-		int commandCount = 0;
-		var windows = CurrentBoundsList
-			.GetRootElements()
-			.Select( r => GetElement( r.Id ) )
-			.OfType<Window>()
-			.ToList();
-		// Log.Info( $"Printing Draw List" );
-		for ( int i = 0; i < windows.Count; i++ )
-		{
-			var window = windows[i];
-			commandCount += window.DrawList.Count;
-			// Log.Info( $"{i}: {window.Id}, {window.DrawList.Count} draw command(s)" );
-			// We assume the windows were already sorted in to the correct order.
-			window.DrawList.Render();
-		}
 	}
 }

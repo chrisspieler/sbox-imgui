@@ -27,6 +27,7 @@ internal partial class ImGuiSystem : GameObjectSystem<ImGuiSystem>
 			return;
 
 		FinalizeBounds();
+		RemoveExpiredDrawLists();
 		BuildDrawLists();
 		ClearInput();
 	}

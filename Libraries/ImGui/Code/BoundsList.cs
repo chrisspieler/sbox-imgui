@@ -97,6 +97,8 @@ internal class BoundsList
 		return element;
 	}
 
+	public bool TryGetElement( int id, out BoundsElement element ) => Elements.TryGetValue( id, out element );
+
 	public ElementFlags GetElementFlags( int id )
 	{
 		Elements.TryGetValue( id, out var element );

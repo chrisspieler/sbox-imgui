@@ -1,6 +1,8 @@
 ﻿using Duccsoft.ImGui.Elements;
+using Duccsoft.ImGui.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Duccsoft.ImGui;
 
@@ -14,6 +16,7 @@ internal partial class ImGuiSystem
 	public int? PreviousHoveredElementId { get; set; }
 
 	public Stack<Window> WindowStack { get; private init; } = new();
+	private Dictionary<int, ImDrawList> DrawLists { get; set; } = new();
 	public IdStack IdStack { get; private init; } = new();
 	private Dictionary<int, Element> CurrentElements { get; set; } = new();
 
@@ -77,7 +80,6 @@ internal partial class ImGuiSystem
 		WindowStack.Clear();
 		IdStack.Clear();
 	}
-
 	
 	private void FinalizeBounds()
 	{
