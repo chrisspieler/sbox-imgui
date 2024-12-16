@@ -1,5 +1,4 @@
-﻿using System;
-using Duccsoft.ImGui.Elements;
+﻿using Duccsoft.ImGui.Elements;
 
 namespace Duccsoft.ImGui;
 
@@ -54,12 +53,23 @@ public static partial class ImGui
 
 	public static bool SliderFloat3( string label, ref Vector3 value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )
 	{
-		throw new NotImplementedException();
+		var components = new float[3] { value.x, value.y, value.z };
+		_ = new Slider<float>( CurrentWindow, label, ref components, min, max, format );
+		value.x = components[0];
+		value.y = components[1];
+		value.z = components[2];
+		return true;
 	}
 
 	public static bool SliderFloat4( string label, ref Vector4 value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )
 	{
-		throw new NotImplementedException();
+		var components = new float[4] { value.x, value.y, value.z, value.w };
+		_ = new Slider<float>( CurrentWindow, label, ref components, min, max, format );
+		value.x = components[0];
+		value.y = components[1];
+		value.z = components[2];
+		value.w = components[3];
+		return true;
 	}
 
 	public static bool SliderInt( string label, ref int value, int min, int max, string format = null, ImGuiSliderFlags flags = 0 )
@@ -70,13 +80,13 @@ public static partial class ImGui
 		return true;
 	}
 
-	public static void Image( Texture texture, Vector2 size, Color tintColor, Color borderColor )
-	{
-		Image( texture, size, Vector2.Zero, Vector2.One, tintColor, borderColor );
-	}
-
 	public static void Image( Texture texture, Vector2 size, Vector2 uv0, Vector2 uv1, Color tintColor, Color borderColor )
 	{
 		_ = new ImageWidget( CurrentWindow, texture, size, uv0, uv1, tintColor, borderColor );
+	}
+
+	public static void Image( Texture texture, Vector2 size, Color tintColor, Color borderColor )
+	{
+		Image( texture, size, Vector2.Zero, Vector2.One, tintColor, borderColor );
 	}
 }

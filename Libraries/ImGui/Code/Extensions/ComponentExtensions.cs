@@ -41,7 +41,9 @@ public static class ComponentExtensions
 		{ typeof(float), ImGuiFloatProperty },
 		{ typeof(int), ImGuiIntProperty },
 		{ typeof(bool), ImGuiBoolProperty },
-		{ typeof(Vector2), ImGuiVector2Property }
+		{ typeof(Vector2), ImGuiVector2Property },
+		{ typeof(Vector3), ImGuiVector3Property },
+		{ typeof(Vector4), ImGuiVector4Property },
 	};
 
 	public static void ImGuiProperty( this Component component, PropertyDescription prop )
@@ -130,6 +132,48 @@ public static class ComponentExtensions
 		ImGui.Text( prop.Name ); ImGui.SameLine();
 		var value = (Vector2)prop.GetValue( component );
 		ImGui.SliderFloat2( prop.Name, ref value, min, max );
+		prop.SetValue( component, value );
+	}
+
+	private static void ImGuiVector3Property( Component component, PropertyDescription prop )
+	{
+		var range = prop.GetCustomAttribute<RangeAttribute>();
+		if ( range is not null )
+		{
+			ImGuiSliderFloat3Property( component, prop, range.Min, range.Max );
+		}
+		else
+		{
+			// TODO: Add DragFloat3
+		}
+	}
+
+	private static void ImGuiSliderFloat3Property( Component component, PropertyDescription prop, float min, float max )
+	{
+		ImGui.Text( prop.Name ); ImGui.SameLine();
+		var value = (Vector3)prop.GetValue( component );
+		ImGui.SliderFloat3( prop.Name, ref value, min, max );
+		prop.SetValue( component, value );
+	}
+
+	private static void ImGuiVector4Property( Component component, PropertyDescription prop )
+	{
+		var range = prop.GetCustomAttribute<RangeAttribute>();
+		if ( range is not null )
+		{
+			ImGuiSliderFloat4Property( component, prop, range.Min, range.Max );
+		}
+		else
+		{
+			// TODO: Add DragFloat4
+		}
+	}
+
+	private static void ImGuiSliderFloat4Property( Component component, PropertyDescription prop, float min, float max )
+	{
+		ImGui.Text( prop.Name ); ImGui.SameLine();
+		var value = (Vector4)prop.GetValue( component );
+		ImGui.SliderFloat4( prop.Name, ref value, min, max );
 		prop.SetValue( component, value );
 	}
 }

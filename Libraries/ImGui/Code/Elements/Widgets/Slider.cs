@@ -12,20 +12,21 @@ public class Slider<T> : Element where T : INumber<T>
 		ComponentCount = components.Length;
 
 		OnBegin();
-		var sliderWidth = 250 / (components.Length);
+		var sliderWidth = BarAreaWidth / (components.Length);
 		for ( int i = 0; i < components.Length; i++ )
 		{
 			ImGui.PushID( i );
 			_ = new SliderBar( this, ref components[i], sliderWidth, min, max, format );
 			ImGui.PopID();
-			ImGui.SameLine( i * sliderWidth + i * Style.ItemInnerSpacing.x );
+			ImGui.SameLine( sliderWidth, Style.ItemInnerSpacing.x );
 		}
 		OnEnd();
 	}
 
 	public string Label { get; set; }
 	public int ComponentCount { get; set; }
-	public override Vector2 Size => new Vector2( 250f, ImGui.GetFrameHeightWithSpacing() )
+	private float BarAreaWidth => ImGui.GetFontSize() * 15f;
+	public override Vector2 Size => new Vector2( BarAreaWidth, ImGui.GetFrameHeightWithSpacing() )
 		+ ComponentCount * new Vector2( Style.ItemInnerSpacing.x, 0f );
 
 	private class SliderBar : Element
@@ -38,7 +39,7 @@ public class Slider<T> : Element where T : INumber<T>
 			Max = max;
 			Format = format;
 
-			Size = new Vector2( width * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
+			Size = new Vector2( width, ImGui.GetFrameHeightWithSpacing() );
 
 			OnBegin();
 			OnEnd();
@@ -117,7 +118,7 @@ public class Slider<T> : Element where T : INumber<T>
 			var text = string.Format( "{0:" + Format + "}", Value );
 			var xOffsetText = bgRect.Size.x * 0.5f;
 			var textPos = ScreenPosition + new Vector2( xOffsetText, Style.FramePadding.y );
-			drawList.AddText( textPos, ImGui.GetColorU32( ImGuiCol.Text ), text );
+			drawList.AddText( textPos, ImGui.GetColorU32( ImGuiCol.Text ), text, TextFlag.CenterTop );
 		}
 	}
 }
