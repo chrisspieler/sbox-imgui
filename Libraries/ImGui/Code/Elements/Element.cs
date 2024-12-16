@@ -33,7 +33,28 @@ public abstract class Element
 
 	public IReadOnlyList<Element> Children => _children;
 	protected List<Element> _children = new();
-	public Element CurrentItem
+	/// <summary>
+	/// Returns the element currently being built as a child of this element, or null if 
+	/// no child is currently being built.
+	/// </summary>
+	internal Element CurrentItem { get; set; }
+	internal Element CurrentItemRecursive
+	{
+		get
+		{
+			if ( CurrentItem is not null )
+				return CurrentItem.CurrentItemRecursive;
+
+			if ( Parent is null )
+				return null;
+
+			return IsEnded ? null : this;
+		}
+	}
+	/// <summary>
+	/// Returns the last child that has already been built, or null if no child has been built.
+	/// </summary>
+	internal Element LastItem
 	{
 		get
 		{
@@ -41,11 +62,35 @@ public abstract class Element
 			if ( lastChildIdx < 0 )
 				return null;
 
-			return Children[lastChildIdx];
+			if ( Children[lastChildIdx].IsEnded )
+				return Children[lastChildIdx];
+
+			if ( lastChildIdx < 1 )
+				return null;
+
+			return Children[lastChildIdx - 1];
 		}
 	}
-	public Vector2 CursorStartPosition { get; set; }
-	public Vector2 CursorPosition { get; set; }
+	internal Element LastItemRecursive
+	{
+		get
+		{
+			// If our last item is still being built...
+			if ( CurrentItem is not null )
+			{
+				var currentLast = CurrentItem.LastItemRecursive;
+				// ...and it has built an item of its own, return that item.
+				if ( currentLast is not null )
+					return currentLast;
+			}
+
+			if ( LastItem is not null )
+				return LastItem.LastItemRecursive;
+
+			return IsEnded ? this : null;
+		}
+	}
+	internal bool IsEnded { get; private set; }
 
 	internal Element FindAncestor( int id )
 	{
@@ -208,7 +253,6 @@ public abstract class Element
 		IsAppearing = !System.PreviousBoundsList.HasId( Id );
 		IsVisible = PreviousInputState.IsVisible();
 		IsReleased = PreviousInputState.IsHovered() && PreviousInputState.HasFlag( ElementFlags.IsActive ) && MouseState.LeftClickReleased;
-		ImGui.NewLine();
 	}
 
 	/// <summary>
@@ -219,6 +263,12 @@ public abstract class Element
 	{
 		// Only after all children are added will we know what this item's bounds are.
 		OnUpdateInput();
+		if ( Parent is not null )
+		{
+			Parent.CurrentItem = null;
+		}
+		IsEnded = true;
+		ImGui.NewLine();
 	}
 
 	// TODO: Replace this with AddToParent
@@ -227,10 +277,11 @@ public abstract class Element
 		if ( child is null || child.Parent != this )
 			return;
 
-		child.Position = CursorPosition;
+		CurrentItem = child;
+		child.Position = ImGui.GetCursorScreenPos() - ScreenPosition;
 		_children.Add( child );
 		var spacing = ImGui.GetStyle().ItemSpacing.y;
-		var maxs = CursorPosition + child.Size + new Vector2( 0f, spacing );
+		var maxs = Window.CursorPosition + child.Size + new Vector2( 0f, spacing );
 		ContentSize = ContentSize.ComponentMax( maxs );
 	}
 

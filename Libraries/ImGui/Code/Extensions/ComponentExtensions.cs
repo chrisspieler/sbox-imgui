@@ -1,5 +1,4 @@
-﻿using Sandbox.Diagnostics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Duccsoft.ImGui;
@@ -17,12 +16,11 @@ public static class ComponentExtensions
 				ImGui.PopID();
 			}
 		}
+
 		if ( !component.IsValid() )
 			return;
 
-		var sw = FastTimer.StartNew();
 		var typeDesc = ImGuiSystem.Current.GetTypeDescription( component.GetType() );
-		var name = typeDesc.ClassName;
 		var properties = ImGuiSystem.Current.GetProperties( component.GetType() );
 		if ( ImGui.CurrentWindow is not null )
 		{
@@ -30,7 +28,7 @@ public static class ComponentExtensions
 		}
 		else
 		{
-			if ( ImGui.Begin( typeDesc.Name ) )
+			if ( ImGui.Begin( typeDesc.ClassName ) )
 			{
 				PrintProperties( properties );
 			}
@@ -42,7 +40,8 @@ public static class ComponentExtensions
 	{
 		{ typeof(float), ImGuiFloatProperty },
 		{ typeof(int), ImGuiIntProperty },
-		{ typeof(bool), ImGuiBoolProperty }
+		{ typeof(bool), ImGuiBoolProperty },
+		{ typeof(Vector2), ImGuiVector2Property }
 	};
 
 	public static void ImGuiProperty( this Component component, PropertyDescription prop )
@@ -110,6 +109,27 @@ public static class ComponentExtensions
 	{
 		var value = (bool)prop.GetValue( component );
 		ImGui.Checkbox( prop.Name, ref value );
+		prop.SetValue( component, value );
+	}
+
+	private static void ImGuiVector2Property( Component component, PropertyDescription prop )
+	{
+		var range = prop.GetCustomAttribute<RangeAttribute>();
+		if ( range is not null )
+		{
+			ImGuiSliderFloat2Property( component, prop, range.Min, range.Max );
+		}
+		else
+		{
+			// TODO: Add DragFloat2
+		}
+	}
+
+	private static void ImGuiSliderFloat2Property( Component component, PropertyDescription prop, float min, float max )
+	{
+		ImGui.Text( prop.Name ); ImGui.SameLine();
+		var value = (Vector2)prop.GetValue( component );
+		ImGui.SliderFloat2( prop.Name, ref value, min, max );
 		prop.SetValue( component, value );
 	}
 }

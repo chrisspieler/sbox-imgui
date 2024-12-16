@@ -100,7 +100,6 @@ internal partial class ImGuiSystem
 		{
 			nextWindow.CursorPosition = Vector2.Zero;
 			nextWindow.TitleBar = new WindowTitleBar( nextWindow );
-			ImGui.NewLine();
 			nextWindow.CursorPosition += Style.WindowPadding;
 			nextWindow.CursorStartPosition = nextWindow.CursorPosition;
 		}

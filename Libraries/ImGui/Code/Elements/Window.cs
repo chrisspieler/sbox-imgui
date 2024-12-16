@@ -40,6 +40,9 @@ public class Window : Element
 
 	internal WindowTitleBar TitleBar { get; set; }
 
+	public Vector2 CursorStartPosition { get; set; }
+	public Vector2 CursorPosition { get; set; }
+
 	public static Color32 BackgroundColor => ImGui.GetColorU32( ImGuiCol.WindowBg );
 	public static Color32 BorderColor => ImGui.GetColorU32( ImGuiCol.Border );
 

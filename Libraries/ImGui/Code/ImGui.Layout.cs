@@ -72,35 +72,38 @@ public static partial class ImGui
 
 	public static void NewLine()
 	{
-		if ( CurrentItem is null )
+		if ( LastItemRecursive is null )
 			return;
 
-		var yOffset = CurrentItem.Position.y + CurrentItem.Size.y + GetStyle().ItemSpacing.y;
-		SetCursorPos( new Vector2( GetCursorStartPos().x, yOffset ) );
+		var item = LastItemRecursive;
+		var window = item.Window;
+		var xOffset = window.CursorStartPosition.x;
+		var yOffset = window.CursorPosition.y + item.Size.y + GetStyle().ItemSpacing.y;
+		var pos = item.Window.Position + new Vector2( xOffset, yOffset );
+		SetCursorScreenPos( pos );
 	}
 
 	public static void SameLine( float offsetFromStartX = 0f, float spacing = -1f )
 	{
-		if ( CurrentItem is null )
+		if ( LastItemRecursive is null )
 			return;
-
 
 		if ( offsetFromStartX != 0 )
 		{
 			if ( spacing < 0f )
 				spacing = 0f;
 
-			var xPos = offsetFromStartX + spacing;
-			var yPos = CurrentItem.Position.y;
-			SetCursorPos( new Vector2( xPos, yPos ) );
+			var pos = LastItemRecursive.ScreenPosition;
+			var xOffset = offsetFromStartX + spacing;
+			SetCursorScreenPos( pos + new Vector2( xOffset, 0f ) );
 		}
 		else
 		{
 			if ( spacing < 0f )
 				spacing = GetStyle().ItemSpacing.x;
 
-			var cursorOffset = new Vector2( CurrentItem.Size.x + spacing, 0f );
-			SetCursorPos( CurrentItem.Position + cursorOffset );
+			var cursorOffset = new Vector2( LastItemRecursive.Size.x + spacing, 0f );
+			SetCursorScreenPos( LastItemRecursive.ScreenPosition + cursorOffset );
 		}
 	}
 }

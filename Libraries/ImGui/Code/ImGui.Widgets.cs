@@ -7,7 +7,7 @@ public static partial class ImGui
 {
 	public static bool IsItemClicked( ImGuiMouseButton button = ImGuiMouseButton.Left )
 	{
-		return System.ClickedElementId == CurrentItem?.Id;
+		return System.ClickedElementId == CurrentItemRecursive?.Id;
 	}
 
 	public static void Text( string formatString, params object[] args )
@@ -45,7 +45,11 @@ public static partial class ImGui
 
 	public static bool SliderFloat2( string label, ref Vector2 value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )
 	{
-		throw new NotImplementedException();
+		var components = new float[2] { value.x, value.y };
+		_ = new Slider<float>( CurrentWindow, label, ref components, min, max, format );
+		value.x = components[0];
+		value.y = components[1];
+		return true;
 	}
 
 	public static bool SliderFloat3( string label, ref Vector3 value, float min, float max, string format = "F3", ImGuiSliderFlags flags = 0 )

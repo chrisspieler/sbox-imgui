@@ -9,26 +9,28 @@ public class Slider<T> : Element where T : INumber<T>
 		: base( parent )
 	{
 		Label = label;
+		ComponentCount = components.Length;
 
 		OnBegin();
+		var sliderWidth = 250 / (components.Length);
 		for ( int i = 0; i < components.Length; i++ )
 		{
 			ImGui.PushID( i );
-			_ = new SliderBar( this, ref components[i], min, max, format );
-			if ( i > 0 && i < components.Length - 1 )
-			{
-				ImGui.SameLine();
-			}
+			_ = new SliderBar( this, ref components[i], sliderWidth, min, max, format );
 			ImGui.PopID();
+			ImGui.SameLine( i * sliderWidth + i * Style.ItemInnerSpacing.x );
 		}
 		OnEnd();
 	}
 
 	public string Label { get; set; }
+	public int ComponentCount { get; set; }
+	public override Vector2 Size => new Vector2( 250f, ImGui.GetFrameHeightWithSpacing() )
+		+ ComponentCount * new Vector2( Style.ItemInnerSpacing.x, 0f );
 
 	private class SliderBar : Element
 	{
-		public SliderBar( Element parent, ref T value, T min, T max, string format )
+		public SliderBar( Element parent, ref T value, float width, T min, T max, string format )
 			: base( parent )
 		{
 			Value = value;
@@ -36,7 +38,7 @@ public class Slider<T> : Element where T : INumber<T>
 			Max = max;
 			Format = format;
 
-			Size = new Vector2( 250 * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
+			Size = new Vector2( width * ImGuiStyle.UIScale, ImGui.GetFrameHeightWithSpacing() );
 
 			OnBegin();
 			OnEnd();
