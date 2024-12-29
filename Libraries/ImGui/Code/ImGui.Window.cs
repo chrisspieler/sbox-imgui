@@ -1,5 +1,4 @@
 ﻿using Duccsoft.ImGui.Rendering;
-using System;
 
 namespace Duccsoft.ImGui;
 
@@ -18,7 +17,7 @@ public static partial class ImGui
 	}
 
 	// TODO: Allow windows to be collapsed.
-	public static bool IsWindowCollapsed() => throw new NotImplementedException();
+	// public static bool IsWindowCollapsed() => throw new NotImplementedException();
 	public static bool IsWindowAppearing() => CurrentWindow?.IsAppearing == true;
 	public static bool IsWindowFocused( ImGuiFocusedFlags flags ) => CurrentWindow?.IsFocused == true; // TODO: Use flags
 	public static bool IsWindowHovered( ImGuiHoveredFlags flags ) => CurrentWindow?.IsHovered == true; // TODO: Use flags

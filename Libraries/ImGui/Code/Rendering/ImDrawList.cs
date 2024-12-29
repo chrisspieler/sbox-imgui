@@ -50,10 +50,10 @@ public class ImDrawList
 	#endregion
 
 	#region Triangle
-	public void AddTriangleFilled( Vector2 p1, Vector2 p2, Vector3 p3, Color32 color )
-	{
-		throw new NotImplementedException();
-	}
+	//public void AddTriangleFilled( Vector2 p1, Vector2 p2, Vector3 p3, Color32 color )
+	//{
+	//	throw new NotImplementedException();
+	//}
 	#endregion
 
 	#region Text

@@ -23,11 +23,12 @@ public static partial class ImGui
 		CurrentWindow.CursorPosition = position - GetWindowPos();
 	}
 
-	public static Vector2 GetContentRegionAvail()
-	{
-		// TODO: Calculate available space in window/group based on max size.
-		throw new NotImplementedException();
-	}
+	//public static Vector2 GetContentRegionAvail()
+	//{
+	//	// TODO: Calculate available space in window/group based on max size.
+	//	throw new NotImplementedException();
+	//}
+
 	public static Vector2 GetCursorPos()
 	{
 		if ( CurrentWindow is null )
