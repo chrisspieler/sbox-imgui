@@ -86,6 +86,8 @@ public class ImGuiDemo : Component
 		ImGui.End();
 	}
 
+	private bool _logPassthroughClick;
+
 	private void DrawWindowNoTitle()
 	{
 		ImGui.SetNextWindowPos( new Vector2( 500, 100 ) * ImGuiStyle.UIScale );
@@ -93,12 +95,33 @@ public class ImGuiDemo : Component
 				| ImGuiWindowFlags.NoFocusOnAppearing;
 		ImGui.Begin( "Window No Title", flags );
 		ImGui.Text( "Press the E key to test whether Input.Pressed still works." );
-		ImGui.Text( "(Check the console for output)" );
+		ImGui.Text( "(Check the console for use action output)" );
+		ImGui.NewLine();
+		var io = ImGui.GetIO();
+		ImGui.Text( $"WantCaptureMouse: {io.WantCaptureMouse}" );
+		var logPassthroughClick = _logPassthroughClick;
+		ImGui.Checkbox( "Log Passthrough Click", ref logPassthroughClick );
+		_logPassthroughClick = logPassthroughClick;
+		if ( _logPassthroughClick )
+		{
+			ImGui.Text( "(Check the console for passthrough click output)" );
+		}
 		ImGui.End();
 
 		if ( Input.Pressed( "use" ) )
 		{
 			Log.Info( "Pressed use action!" );
+		}
+		if ( _logPassthroughClick )
+		{
+			if ( Input.Pressed( "attack1" ) )
+			{
+				Log.Info( "Pressed attack1 action!" );
+			}
+			if ( Input.Released( "attack1" ) )
+			{
+				Log.Info( $"Released attack1 action!" );
+			}
 		}
 	}
 	

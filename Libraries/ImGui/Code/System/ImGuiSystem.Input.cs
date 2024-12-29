@@ -4,6 +4,9 @@ namespace Duccsoft.ImGui;
 
 internal partial class ImGuiSystem
 {
+	[ConVar( "imgui_mouse_capture" )]
+	public static bool EnableMouseCapture { get; set; } = true;
+
 	/// <summary>
 	/// Filters in the current mouse state in to the "highest priority" button clicked,
 	/// returning null if no button is clicked.
@@ -27,16 +30,21 @@ internal partial class ImGuiSystem
 
 	private void InitInput()
 	{
-		CreatePassthrough();
+		InputState = new ImGuiIO();
+		if ( EnableMouseCapture )
+		{
+			_inputPanel = CreatePassthrough();
+		}
 	}
-	private void CreatePassthrough()
+
+	private PassthroughPanel CreatePassthrough()
 	{
-		_inputPanel = new PassthroughPanel()
+		var inputPanel = new PassthroughPanel()
 		{
 			Scene = Scene
 		};
-		_inputPanel.Style.PointerEvents = PointerEvents.All;
-		_inputPanel.LeftClick += p =>
+		inputPanel.Style.PointerEvents = PointerEvents.All;
+		inputPanel.LeftClick += p =>
 		{
 			if ( p )
 			{
@@ -46,7 +54,7 @@ internal partial class ImGuiSystem
 			MouseState.LeftClickDown = p;
 			MouseState.LeftClickReleased = !p;
 		};
-		_inputPanel.RightClick += p =>
+		inputPanel.RightClick += p =>
 		{
 			if ( p )
 			{
@@ -56,7 +64,7 @@ internal partial class ImGuiSystem
 			MouseState.RightClickDown = p;
 			MouseState.RightClickReleased = !p;
 		};
-		_inputPanel.MiddleClick += p =>
+		inputPanel.MiddleClick += p =>
 		{
 			if ( p )
 			{
@@ -66,13 +74,22 @@ internal partial class ImGuiSystem
 			MouseState.MiddleClickDown = p;
 			MouseState.MiddleClickReleased = !p;
 		};
+		return inputPanel;
 	}
 
-	public int HoveredItemId { get; set; }
-	public int HoveredWindowId { get; set; }
+	public ImGuiIO InputState { get; private set; }
 
 	private void InitializeInput()
 	{
+		if ( EnableMouseCapture )
+		{
+			_inputPanel ??= CreatePassthrough();
+		}
+		else
+		{
+			_inputPanel?.Delete();
+			_inputPanel = null;
+		}
 		UpdateMouseState();
 	}
 
@@ -83,6 +100,14 @@ internal partial class ImGuiSystem
 
 	private void UpdateMouseState()
 	{
+		if ( !EnableMouseCapture )
+			return;
+
+		InputState.WantCaptureMouse = PreviousHoveredWindowId is not null;
+		_inputPanel.Style.PointerEvents = InputState.WantCaptureMouse
+			? PointerEvents.All
+			: PointerEvents.None;
+
 		MouseState.Position = Mouse.Position;
 		switch ( MouseButton )
 		{

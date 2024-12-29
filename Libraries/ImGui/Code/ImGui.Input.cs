@@ -2,6 +2,7 @@
 
 public static partial class ImGui
 {
+	public static ImGuiIO GetIO() => System.InputState;
 	public static Vector2 GetMousePos() => MouseState.Position;
 	public static Vector2 GetMouseDragDelta( ImGuiMouseButton button, float lockThreshold = -1.0f )
 	{
