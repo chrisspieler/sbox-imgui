@@ -8,9 +8,6 @@ internal class PassthroughPanel : RootPanel
 	{
 		if ( !firstTime )
 			return;
-
-		AcceptsFocus = true;
-		Focus();
 	}
 
 	public override void Tick()
