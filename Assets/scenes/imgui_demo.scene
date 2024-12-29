@@ -21,6 +21,7 @@
         {
           "__type": "Sandbox.ExampleComponent",
           "__guid": "77f8aaab-ce3c-4d38-9e58-2bed690c500a",
+          "Checkbox": true,
           "ColorEdit4": "1,0.6,0,1",
           "Combo": "Duccs",
           "DragFloat": 20,
@@ -28,6 +29,9 @@
           "DragFloat3": "10,-30,50",
           "DragInt": 64,
           "SliderFloat": 400,
+          "SliderFloat2": "0,0",
+          "SliderFloat3": "0,0,0",
+          "SliderFloat4": "0,0,0,0",
           "SliderInt": 8
         }
       ]

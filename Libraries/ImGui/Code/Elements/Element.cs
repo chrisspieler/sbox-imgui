@@ -248,6 +248,7 @@ public abstract class Element
 	/// </summary>
 	public virtual void OnBegin()
 	{
+
 		Parent?.AddChild( this );
 		PreviousInputState = System.PreviousBoundsList.GetElementFlags( Id );
 		IsAppearing = !System.PreviousBoundsList.HasId( Id );

@@ -18,6 +18,7 @@ public class ImGuiDemo : Component
 		Mouse.Visible = true;
 		DrawWindow1();
 		DrawWindow2();
+		DrawDupeWidgetWindows();
 		DrawWindowNoTitle();
 		DrawMovingWindow();
 		ExampleComponent.ImGuiInspector();
@@ -56,6 +57,31 @@ public class ImGuiDemo : Component
 			ImGui.Text( "Hello," );
 			ImGui.Text( "World!" );
 			ImGui.Text( "How's it going, everyone?" );
+		}
+		ImGui.End();
+	}
+
+	private float _dupeFloat1;
+	private float _dupeFloat2;
+	private float _dupeFloat3;
+
+	private void DrawDupeWidgetWindows()
+	{
+		ImGui.SetNextWindowPos( new Vector2( 700, 500 ) * ImGuiStyle.UIScale );
+		if ( ImGui.Begin( "Window 3" ) )
+		{
+			ImGui.Text( "Slider1" ); ImGui.SameLine();
+			var dupeFloat1 = _dupeFloat1;
+			ImGui.SliderFloat( "Slider1", ref dupeFloat1, 0, 100 );
+			_dupeFloat1 = dupeFloat1;
+			ImGui.Text( "Slider2" ); ImGui.SameLine();
+			var dupeFloat2 = _dupeFloat2;
+			ImGui.SliderFloat( "Slider2", ref dupeFloat2, 0, 100 );
+			_dupeFloat2 = dupeFloat2;
+			ImGui.Text( "Slider2" ); ImGui.SameLine();
+			var dupeFloat3 = _dupeFloat3;
+			ImGui.SliderFloat( "Slider2", ref dupeFloat3, 0, 100 );
+			_dupeFloat3 = dupeFloat3;
 		}
 		ImGui.End();
 	}

@@ -9,6 +9,7 @@ public class Checkbox : Element
 	{
 		Checked = isChecked;
 		Label = label;
+		Id = ImGui.GetID( Label );
 
 		OnBegin();
 		OnEnd();

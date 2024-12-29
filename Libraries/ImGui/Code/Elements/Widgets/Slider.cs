@@ -9,9 +9,11 @@ public class Slider<T> : Element where T : INumber<T>
 		: base( parent )
 	{
 		Label = label;
+		Id = ImGui.GetID( Label );
 		ComponentCount = components.Length;
 
 		OnBegin();
+		ImGui.PushID( Id );
 		var sliderWidth = BarAreaWidth / (components.Length);
 		for ( int i = 0; i < components.Length; i++ )
 		{
@@ -20,6 +22,7 @@ public class Slider<T> : Element where T : INumber<T>
 			ImGui.PopID();
 			ImGui.SameLine( sliderWidth, Style.ItemInnerSpacing.x );
 		}
+		ImGui.PopID();
 		OnEnd();
 	}
 
