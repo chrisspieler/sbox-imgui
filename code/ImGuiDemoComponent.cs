@@ -92,9 +92,14 @@ public class ImGuiDemo : Component
 		var flags =	ImGuiWindowFlags.NoTitleBar
 				| ImGuiWindowFlags.NoFocusOnAppearing;
 		ImGui.Begin( "Window No Title", flags );
-		ImGui.Text( "This window has no title!" );
-		ImGui.Text( "Wow." );
+		ImGui.Text( "Press the E key to test whether Input.Pressed still works." );
+		ImGui.Text( "(Check the console for output)" );
 		ImGui.End();
+
+		if ( Input.Pressed( "use" ) )
+		{
+			Log.Info( "Pressed use action!" );
+		}
 	}
 	
 	private void DrawMovingWindow()
